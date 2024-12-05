@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.contrib.auth import get_user_model
 
 
@@ -9,13 +8,13 @@ User = get_user_model() # забираем кастомную модель
 class Office(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
-    link_to_admin = models.CharField(null=True, blank=True) # tastes_like_joy + t.me/
+    link_to_admin = models.CharField(max_length=255, null=True, blank=True) # tastes_like_joy + t.me/
     quota = models.IntegerField(null=True, blank=True)
     default_quota = models.IntegerField(null=True, blank=True)
     user_quota = models.IntegerField(null=True, blank=True)
     need_quota = models.IntegerField(null=True, blank=True)
 
-    superviser = models.OneToOneField(User, on_delete=models.SET_NULL)
+    superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
 
 
 class Status(models.Model):
@@ -30,35 +29,40 @@ class Experience(models.Model):
 
 
 class PersonalInfo(models.Model):
+
+    class Genders(models.TextChoices):
+        male = 'ma', 'мужской'
+        female = 'fe', 'женский'
+
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=30)
-    contact_link = models.CharField(null=True, blank=True)
+    contact_link = models.CharField(max_length=255, null=True, blank=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
-    gender = models.CharField(null=True, blank=True)
+    gender = models.CharField(choices=Genders, max_length=2, null=True, blank=True)
     date_of_birth = models.DateTimeField()
 
 
 class Course(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=50)
     progress = models.IntegerField()
 
 
 class Skill(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=50)
 
 
 class CandidateCard(User):
     created_at = models.DateTimeField(auto_now_add=True)
-    current_workplace = models.CharField(null=True, blank=True) # где сейчас
-    current_occupation = models.CharField(null=True, blank=True) # кем сейчас
+    current_workplace = models.CharField(max_length=255, null=True, blank=True) # где сейчас
+    current_occupation = models.CharField(max_length=255, null=True, blank=True) # кем сейчас
     employment_date = models.DateTimeField(null=True, blank=True) # дата трудоустройства (авто по статусу)
     comment = models.CharField(max_length=300)
     favorite = models.BooleanField(default=False, blank=True)
     archived = models.BooleanField(default=False, blank=True)
-    synopsis = models.CharField(null=True, blank=True) # ссылка на резюме
+    synopsis = models.CharField(max_length=255, null=True, blank=True) # ссылка на резюме
 
     objects_card = models.IntegerField(verbose_name='Объекты', null=True, blank=True)
     clients_card = models.IntegerField(verbose_name='Клиенты', null=True, blank=True)
