@@ -69,8 +69,8 @@ class CandidateCard(User):
 
     invitation_to_office = models.ForeignKey(Office, null=True, blank=True, on_delete=models.SET_NULL)
     status = models.ForeignKey(Status, null=True, blank=True, on_delete=models.SET_NULL)  # TODO доработать статусы
-    experience = models.ForeignKey(Experience, on_delete=models.SET_NULL)
-    personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
+    experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
+    personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE)
 
     course = models.ManyToManyField('CandidateCourse')
     skills = models.ManyToManyField('CandidateSkill')
