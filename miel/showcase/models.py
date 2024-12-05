@@ -74,7 +74,6 @@ class CandidateCard(User):
 
     course = models.ManyToManyField('CandidateCourse')
     skills = models.ManyToManyField('CandidateSkill')
-
 class CandidateCourse(models.Model):
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
