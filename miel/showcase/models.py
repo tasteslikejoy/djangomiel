@@ -9,12 +9,17 @@ class Office(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     link_to_admin = models.CharField(max_length=255, null=True, blank=True) # tastes_like_joy + t.me/
-    quota = models.IntegerField(null=True, blank=True)
+
+    superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+
+
+class Quota(models.Model):
+    quantity = models.IntegerField(null=True, blank=True)
     default_quota = models.IntegerField(null=True, blank=True)
     user_quota = models.IntegerField(null=True, blank=True)
     need_quota = models.IntegerField(null=True, blank=True)
 
-    superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+    office = models.ForeignKey(Office, null=True, blank=True, on_delete=models.CASCADE)
 
 
 class Status(models.Model):
