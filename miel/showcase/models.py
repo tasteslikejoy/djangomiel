@@ -5,13 +5,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model() # забираем кастомную модель
 
 
-class Office(models.Model):
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
-    link_to_admin = models.CharField(max_length=255, null=True, blank=True) # tastes_like_joy + t.me/
-
-    superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
-
 
 class Quota(models.Model):
     quantity = models.IntegerField(null=True, blank=True)
@@ -20,7 +13,14 @@ class Quota(models.Model):
     need = models.IntegerField(null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
-    office = models.OneToOneField(Office, null=True, blank=True, on_delete=models.CASCADE)
+
+class Office(models.Model):
+    name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    link_to_admin = models.CharField(max_length=255, null=True, blank=True) # tastes_like_joy + t.me/
+
+    superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+    quota = models.ForeignKey(Quota, null=True, blank=True, on_delete=models.CASCADE)
 
 
 class Status(models.Model):
