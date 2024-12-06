@@ -15,9 +15,10 @@ class Office(models.Model):
 
 class Quota(models.Model):
     quantity = models.IntegerField(null=True, blank=True)
-    default_quota = models.IntegerField(null=True, blank=True)
-    user_quota = models.IntegerField(null=True, blank=True)
-    need_quota = models.IntegerField(null=True, blank=True)
+    default = models.IntegerField(null=True, blank=True)
+    used = models.IntegerField(null=True, blank=True)
+    need = models.IntegerField(null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     office = models.OneToOneField(Office, null=True, blank=True, on_delete=models.CASCADE)
 
