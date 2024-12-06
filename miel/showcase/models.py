@@ -56,24 +56,25 @@ class Skill(models.Model):
 
 class CandidateCard(User):
     created_at = models.DateTimeField(auto_now_add=True)
-    current_workplace = models.CharField(max_length=255, null=True, blank=True) # где сейчас
-    current_occupation = models.CharField(max_length=255, null=True, blank=True) # кем сейчас
-    employment_date = models.DateTimeField(null=True, blank=True) # дата трудоустройства (авто по статусу)
+    current_workplace = models.CharField(max_length=255, null=True, blank=True)  # где сейчас
+    current_occupation = models.CharField(max_length=255, null=True, blank=True)  # кем сейчас
+    employment_date = models.DateTimeField(null=True, blank=True)  # дата трудоустройства (авто по статусу)
     comment = models.CharField(max_length=300)
     favorite = models.BooleanField(default=False, blank=True)
     archived = models.BooleanField(default=False, blank=True)
-    synopsis = models.CharField(max_length=255, null=True, blank=True) # ссылка на резюме
+    synopsis = models.CharField(max_length=255, null=True, blank=True)  # ссылка на резюме
 
     objects_card = models.IntegerField(verbose_name='Объекты', null=True, blank=True)
     clients_card = models.IntegerField(verbose_name='Клиенты', null=True, blank=True)
 
     invitation_to_office = models.ForeignKey(Office, null=True, blank=True, on_delete=models.SET_NULL)
     status = models.ForeignKey(Status, null=True, blank=True, on_delete=models.SET_NULL)  # TODO доработать статусы
-    experience = models.ForeignKey(Experience, on_delete=models.SET_NULL)
+    experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
 
     course = models.ManyToManyField('CandidateCourse')
     skills = models.ManyToManyField('CandidateSkill')
+
 
 class CandidateCourse(models.Model):
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
