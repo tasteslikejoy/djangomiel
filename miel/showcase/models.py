@@ -5,16 +5,22 @@ from django.contrib.auth import get_user_model
 User = get_user_model() # забираем кастомную модель
 
 
+
+class Quota(models.Model):
+    quantity = models.IntegerField(null=True, blank=True)
+    default = models.IntegerField(null=True, blank=True)
+    used = models.IntegerField(null=True, blank=True)
+    need = models.IntegerField(null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+
 class Office(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     link_to_admin = models.CharField(max_length=255, null=True, blank=True) # tastes_like_joy + t.me/
-    quota = models.IntegerField(null=True, blank=True)
-    default_quota = models.IntegerField(null=True, blank=True)
-    user_quota = models.IntegerField(null=True, blank=True)
-    need_quota = models.IntegerField(null=True, blank=True)
 
     superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
+    quota = models.ForeignKey(Quota, null=True, blank=True, on_delete=models.CASCADE)
 
 
 class Status(models.Model):
