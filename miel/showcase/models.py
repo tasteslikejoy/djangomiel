@@ -19,7 +19,7 @@ class Quota(models.Model):
     user_quota = models.IntegerField(null=True, blank=True)
     need_quota = models.IntegerField(null=True, blank=True)
 
-    office = models.ForeignKey(Office, null=True, blank=True, on_delete=models.CASCADE)
+    office = models.OneToOneField(Office, null=True, blank=True, on_delete=models.CASCADE)
 
 
 class Status(models.Model):
