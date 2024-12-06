@@ -44,6 +44,9 @@ class PersonalInfo(models.Model):
     gender = models.CharField(choices=Genders, max_length=2, null=True, blank=True)
     date_of_birth = models.DateTimeField()
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Course(models.Model):
     name = models.CharField(max_length=50)
