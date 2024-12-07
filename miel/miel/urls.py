@@ -22,5 +22,6 @@ from showcase.views import PersonaInfoAPIView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/personal_info_card/', PersonaInfoAPIView.as_view()),
+    path('api/v1/personal_info_card/<int:pk>/', PersonaInfoAPIView.as_view()),
 
 ]

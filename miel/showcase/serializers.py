@@ -19,15 +19,30 @@ from .models import PersonalInfo, CandidateCard
 
 class PersonalInfoSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    phone = serializers.CharField(max_length=30)
-    contact_link = serializers.CharField(max_length=255)
+    phone = serializers.CharField(max_length=30 )
+    contact_link = serializers.CharField(max_length=255, read_only=True)
     first_name = serializers.CharField(max_length=50)
     last_name = serializers.CharField(max_length=50)
     middle_name = serializers.CharField(max_length=50)
     city = serializers.CharField(max_length=50)
-    gender = serializers.CharField()
+    gender = serializers.CharField(read_only=True)
     date_of_birth = serializers.DateTimeField()
 
+    def create(self, validated_data):
+        return PersonalInfo.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get('email', instance.email)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.contact_link = validated_data.get('contact_link', instance.contact_link)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.middle_name = validated_data.get('middle_name', instance.middle_name)
+        instance.city = validated_data.get('city', instance.city)
+        instance.gender = validated_data.get('gender', instance.gender)
+        instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
+        instance.save()
+        return instance
 
 # def encode():
 #     model = CandidateCardModel('Semen', 'Firsov')
