@@ -35,12 +35,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     contact_link = models.CharField(max_length=255, null=True, blank=True)
-
+    # is_active = models.BooleanField(default=False)  #TODO нужно для подтверждения по email?
     is_staff = models.BooleanField(default=False)
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'first_name',
+        'last_name',
+        'middle_name',
+    ]
 
     objects = UserManager()
 

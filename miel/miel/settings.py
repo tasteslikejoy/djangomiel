@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
+    'users.apps.UsersConfig',
     'showcase',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -139,6 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 
@@ -159,23 +162,25 @@ REST_FRAMEWORK = {
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    # 'USER_CREATE_PASSWORD_RETYPE': True,
+    'USER_CREATE_PASSWORD_RETYPE': True,
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
-    'TOKEN_MODEL': None,
-    'SERIALIZERS': {},
+    'TOKEN_MODEL': None,  # Setup for JWT
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserRegistrationSerializer'
+    },
     'PERMISSIONS': {
         'activation': ['rest_framework.permissions.AllowAny'],
         'password_reset': ['rest_framework.permissions.AllowAny'],
         'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
-        'username_reset': ['rest_framework.permissions.CurrentUserOrAdmin'],  #
+        'username_reset': ['djoser.permissions.CurrentUserOrAdmin'],  #
         'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
-        'user_create': ['rest_framework.permissions.IsAdmin'],  #
-        'user_delete': ['djoser.permissions.IsAdmin'],  #
+        'user_create': ['rest_framework.permissions.IsAdminUser'],  #
+        'user_delete': ['rest_framework.permissions.IsAdminUser'],  #
         'user': ['djoser.permissions.CurrentUserOrAdmin'],
-        'user_list': ['djoser.permissions.IsAdmin'],  #
+        'user_list': ['rest_framework.permissions.IsAdminUser'],  #
         'token_create': ['rest_framework.permissions.AllowAny'],
         'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
     }
