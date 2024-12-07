@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from showcase.views import CardCandidateAPIView
+from showcase.views import PersonaInfoAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/personal_info_card/', CardCandidateAPIView.as_view()),
+    path('api/v1/personal_info_card/', PersonaInfoAPIView.as_view()),
 
 ]

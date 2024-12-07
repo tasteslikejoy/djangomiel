@@ -49,7 +49,7 @@ class PersonalInfo(models.Model):
 
 
 class Course(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(blank=True, null=True, max_length=50)
     progress = models.IntegerField()
 
 
@@ -62,7 +62,7 @@ class CandidateCard(User):
     current_workplace = models.CharField(max_length=255, null=True, blank=True)  # где сейчас
     current_occupation = models.CharField(max_length=255, null=True, blank=True)  # кем сейчас
     employment_date = models.DateTimeField(null=True, blank=True)  # дата трудоустройства (авто по статусу)
-    comment = models.CharField(max_length=300)
+    comment = models.CharField(max_length=300, blank=True, null=True)
     favorite = models.BooleanField(default=False, blank=True)
     archived = models.BooleanField(default=False, blank=True)
     synopsis = models.CharField(max_length=255, null=True, blank=True)  # ссылка на резюме
@@ -75,8 +75,8 @@ class CandidateCard(User):
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
 
-    course = models.ManyToManyField('CandidateCourse')
-    skills = models.ManyToManyField('CandidateSkill')
+    course = models.ManyToManyField('CandidateCourse', blank=True, null=True)
+    skills = models.ManyToManyField('CandidateSkill', blank=True, null=True)
 
 
 class CandidateCourse(models.Model):
