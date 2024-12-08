@@ -13,6 +13,10 @@ from .serializers import PersonalInfoSerializer
 #     queryset = PersonalInfo.objects.all()
 #     serializer_class = PersonalInfoSerializer
 
+class PersonalInfoAPIList(generics.ListCreateAPIView):
+    queryset = PersonalInfo.objects.all()
+    serializer_class = PersonalInfoSerializer
+
 
 class PersonaInfoAPIView(APIView):
     def get(self, request):
@@ -46,6 +50,6 @@ class PersonaInfoAPIView(APIView):
         if not pk:
             return Response({'error': 'Method DELETE not allowed'})
         serializer = PersonalInfo.objects.get(pk=pk)
-        serializer.delete()
+        serializer.delete(  )
 
         return Response({"post": 'delete post' + str(pk)})

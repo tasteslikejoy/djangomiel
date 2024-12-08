@@ -17,11 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from showcase.views import PersonaInfoAPIView
+from showcase.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/personal_info_card/', PersonaInfoAPIView.as_view()),
-    path('api/v1/personal_info_card/<int:pk>/', PersonaInfoAPIView.as_view()),
+    path('api/v1/personal_info_card/', PersonalInfoAPIList.as_view()),
+    path('api/v1/personal_info_card/<int:pk>/', PersonalInfoAPIList.as_view()),
 
 ]
