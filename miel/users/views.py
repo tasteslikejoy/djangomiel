@@ -5,7 +5,7 @@ from rest_framework.views import APIView, status
 from rest_framework.decorators import api_view, permission_classes
 
 from .permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
-from .serializers import UserRegistrationSerializer
+from .serializers import UserRegistrationSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -19,20 +19,9 @@ class TestApiView(APIView):
 
     def get(self, request):
         users = User.objects.all()
-        serializer = UserRegistrationSerializer(users, many=True)
-
-        user = request.user
-        role = None
-
-        if not all([user.is_superadmin, user.is_admin]):
-            role = 'Руководитель'
-        elif user.is_superadmin:
-            role = 'СуперАдминистратор'
-        elif user.is_admin:
-            role = 'Администратор'
+        serializer = UserSerializer(users, many=True)
 
         return Response({
             'status': status.HTTP_200_OK,
             'data': serializer.data,
-            'user_role': role,
         })
