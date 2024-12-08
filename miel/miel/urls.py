@@ -22,6 +22,7 @@ from showcase.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/personal_info_card/', PersonalInfoAPIList.as_view()),
-    path('api/v1/personal_info_card/<int:pk>/', PersonalInfoAPIList.as_view()),
+    path('api/v1/personal_info_card/<int:pk>/', PersonalInfoAPIUpdate.as_view()),
+    path('api/v1/personal_info_detail/<int:pk>', PersonalInfoDetailView.as_view()),
 
 ]
