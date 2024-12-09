@@ -21,6 +21,11 @@ from showcase.views import *
 from rest_framework import routers
 
 
+# @action(methods=["get"], detail=False)
+# def office(self, request):
+#     off = Office.objects.all()
+#     return Response({'off': [c.name for c in off]})
+
 class MyCustomRouter(routers.SimpleRouter):
     routes = [
         routers.Route(url=r'^{prefix}$',
@@ -29,14 +34,15 @@ class MyCustomRouter(routers.SimpleRouter):
                       detail=False,
                       initkwargs={'suffix': 'List'}),
         routers.Route(url=r'^{prefix}/{lookup}$',
-                      mapping={'get': 'retrieve',
-                               'put': 'update',
-                               'patch': 'partial_update',
-                               'delete': 'destroy'},
+                      mapping={'get': 'retrieve'},
+                      name='{basename}-detail',
+                      detail=True,
+                      initkwargs={'suffix': 'Detail'})
     ]
 
-router = routers.DefaultRouter()
-router.register(r'personal_info', PersonalInfoViewSet)
+
+router = MyCustomRouter()
+router.register(r'personal_info', PersonalInfoViewSet, basename='personal_info')
 print(router.urls)
 
 urlpatterns = [

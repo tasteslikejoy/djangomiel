@@ -35,7 +35,7 @@ class PersonalInfoViewSet(mixins.CreateModelMixin,
     @action(methods=['get'], detail=True)
     def candidate_office(self, request, pk=None):
         office_cand = Office.objects.get(pk=pk)
-        return Response({'office_cand': [office_cand.name]})
+        return Response({'office_cand': office_cand.name})
 
 # class PersonalInfoAPIList(generics.ListCreateAPIView):
 #     queryset = PersonalInfo.objects.all()
