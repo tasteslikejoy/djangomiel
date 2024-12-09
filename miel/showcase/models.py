@@ -11,7 +11,7 @@ class Quota(models.Model):
     default = models.IntegerField(null=True, blank=True)
     used = models.IntegerField(null=True, blank=True)
     need = models.IntegerField(null=True, blank=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateField(auto_now_add=True)
 
 
 class Office(models.Model):
@@ -31,24 +31,24 @@ class Experience(models.Model):
     workplace = models.CharField(max_length=255, null=True, blank=True)
     occupation = models.CharField(max_length=255, null=True, blank=True)
     date_start = models.DateTimeField(null=True, blank=True)
-    date_end = models.DateTimeField(null=True, blank=True)
+    date_end = models.DateField(null=True, blank=True)
 
 
 class PersonalInfo(models.Model):
 
     class Genders(models.TextChoices):
-        male = 'ma', 'мужской'
-        female = 'fe', 'женский'
+        male = 'male', 'мужской'
+        female = 'female', 'женский'
 
     email = models.EmailField(null=True, blank=True)
-    phone = models.CharField(max_length=30)
+    phone = models.CharField(max_length=30, null=True, blank=True)
     contact_link = models.CharField(max_length=255, null=True, blank=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
-    gender = models.CharField(choices=Genders, max_length=2, null=True, blank=True)
-    date_of_birth = models.DateTimeField()
+    gender = models.CharField(choices=Genders, max_length=6, null=True, blank=True)
+    date_of_birth = models.DateField()
 
 
 class Course(models.Model):
@@ -60,11 +60,11 @@ class Skill(models.Model):
     name = models.CharField(max_length=50)
 
 
-class CandidateCard(User):
-    created_at = models.DateTimeField(auto_now_add=True)
+class CandidateCard(models.Model):
+    created_at = models.DateField(auto_now_add=True)
     current_workplace = models.CharField(max_length=255, null=True, blank=True) # где сейчас
     current_occupation = models.CharField(max_length=255, null=True, blank=True) # кем сейчас
-    employment_date = models.DateTimeField(null=True, blank=True) # дата трудоустройства (авто по статусу)
+    employment_date = models.DateField(null=True, blank=True) # дата трудоустройства (авто по статусу)
     comment = models.CharField(max_length=300)
     favorite = models.BooleanField(default=False, blank=True)
     archived = models.BooleanField(default=False, blank=True)
@@ -78,8 +78,10 @@ class CandidateCard(User):
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
     personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE)
 
-    course = models.ManyToManyField('CandidateCourse')
-    skills = models.ManyToManyField('CandidateSkill')
+    course = models.ManyToManyField('CandidateCourse', null=True, blank=True)
+    skills = models.ManyToManyField('CandidateSkill', null=True, blank=True)
+
+
 class CandidateCourse(models.Model):
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
