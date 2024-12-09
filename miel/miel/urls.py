@@ -20,13 +20,21 @@ from django.contrib import admin
 from django.urls import path, include
 
 from users.views import TestApiView
+from showcase.views import CardTestApiView
+
+from rest_framework.routers import DefaultRouter
+
+# router = DefaultRouter()
+# router.register(r'test2', CardTestApiView, basename='test2')
 
 urlpatterns = [
+    # path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls.jwt')),
     path('auth/', include('djoser.urls')),
-    # path('auth/', include('djoser.urls.authtoken')),
-    path('test/', TestApiView.as_view(), name='test_api')
+    path('test/', TestApiView.as_view(), name='test_api'),
+    path('test_cards/', CardTestApiView.as_view(), name='card_test_api'),
+
 ]
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

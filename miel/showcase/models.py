@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model() # забираем кастомную модель
 
 
-
 class Quota(models.Model):
     quantity = models.IntegerField(null=True, blank=True)
     default = models.IntegerField(null=True, blank=True)
@@ -25,6 +24,9 @@ class Office(models.Model):
 
 class Status(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.name}'
 
 
 class Experience(models.Model):
@@ -60,7 +62,7 @@ class Skill(models.Model):
     name = models.CharField(max_length=50)
 
 
-class CandidateCard(User):
+class CandidateCard(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     current_workplace = models.CharField(max_length=255, null=True, blank=True) # где сейчас
     current_occupation = models.CharField(max_length=255, null=True, blank=True) # кем сейчас
@@ -78,8 +80,10 @@ class CandidateCard(User):
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
     personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE)
 
-    course = models.ManyToManyField('CandidateCourse')
-    skills = models.ManyToManyField('CandidateSkill')
+    course = models.ManyToManyField('CandidateCourse', null=True, blank=True)
+    skills = models.ManyToManyField('CandidateSkill', null=True, blank=True)
+
+
 class CandidateCourse(models.Model):
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
