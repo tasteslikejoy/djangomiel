@@ -73,13 +73,17 @@ class CandidateCard(models.Model):
     objects_card = models.IntegerField(verbose_name='Объекты', null=True, blank=True)
     clients_card = models.IntegerField(verbose_name='Клиенты', null=True, blank=True)
 
-    invitation_to_office = models.ForeignKey(Office, null=True, blank=True, on_delete=models.SET_NULL)
-    status = models.ForeignKey(Status, null=True, blank=True, on_delete=models.SET_NULL)  # TODO доработать статусы
+    invitation_to_office = models.ForeignKey('Invitations', null=True, blank=True, on_delete=models.SET_NULL)
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
     personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE)
 
     course = models.ManyToManyField('CandidateCourse', null=True, blank=True)
     skills = models.ManyToManyField('CandidateSkill', null=True, blank=True)
+
+
+class Invitations(models.Model):
+    office = models.ForeignKey(Office, on_delete=models.CASCADE)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
 
 
 class CandidateCourse(models.Model):
