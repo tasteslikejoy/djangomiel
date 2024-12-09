@@ -20,6 +20,21 @@ from django.urls import path, include
 from showcase.views import *
 from rest_framework import routers
 
+
+class MyCustomRouter(routers.SimpleRouter):
+    routes = [
+        routers.Route(url=r'^{prefix}$',
+                      mapping={'get': 'list'},
+                      name='{basename}-list',
+                      detail=False,
+                      initkwargs={'suffix': 'List'}),
+        routers.Route(url=r'^{prefix}/{lookup}$',
+                      mapping={'get': 'retrieve',
+                               'put': 'update',
+                               'patch': 'partial_update',
+                               'delete': 'destroy'},
+    ]
+
 router = routers.DefaultRouter()
 router.register(r'personal_info', PersonalInfoViewSet)
 print(router.urls)

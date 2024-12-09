@@ -24,10 +24,18 @@ class PersonalInfoViewSet(mixins.CreateModelMixin,
     queryset = PersonalInfo.objects.all()
     serializer_class = PersonalInfoSerializer
 
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            return PersonalInfo.objects.all()[:2]
+
+        return PersonalInfo.objects.filter(pk=pk)
+
     @action(methods=['get'], detail=True)
     def candidate_office(self, request, pk=None):
-        office_cand = Office.objects.all()
-        return Response({'office_cand': [c.name for c in office_cand]})
+        office_cand = Office.objects.get(pk=pk)
+        return Response({'office_cand': [office_cand.name]})
 
 # class PersonalInfoAPIList(generics.ListCreateAPIView):
 #     queryset = PersonalInfo.objects.all()
