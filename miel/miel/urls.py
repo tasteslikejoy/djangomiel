@@ -14,8 +14,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import djoser
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 from showcase.views import *
 from rest_framework import routers
@@ -46,8 +47,6 @@ from rest_framework import routers
 # print(router.urls)
 
 
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api/v1/', include(router.urls)),
@@ -55,7 +54,9 @@ urlpatterns = [
 
     path('api/v1/personal_info/', PersonalInfoAPIList.as_view()),
     path('api/v1/personal_info/<int:pk>/', PersonalInfoAPIUpdate.as_view()),
-    path('api/v1/personal_info_delete/<int:pk>/', PersonalInfoAPIDestroy.as_view())
+    path('api/v1/personal_info_delete/<int:pk>/', PersonalInfoAPIDestroy.as_view()),
+    path('api/v1/auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
     # path('api/v1/personal_info_card/', PersonalInfoViewSet.as_view({'get': 'list'})),
     # path('api/v1/personal_info_card/<int:pk>/', PersonalInfoViewSet.as_view({'get': 'update'})),
 

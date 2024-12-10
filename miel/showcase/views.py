@@ -2,6 +2,7 @@ from django.db.models import Model
 from django.forms import model_to_dict
 from django.shortcuts import render
 from rest_framework import generics, viewsets, mixins
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
@@ -48,7 +49,8 @@ class PersonalInfoAPIList(generics.ListCreateAPIView):
 class PersonalInfoAPIUpdate(generics.RetrieveUpdateAPIView  ):
     queryset = PersonalInfo.objects.all()
     serializer_class = PersonalInfoSerializer
-    # permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)
 
 
 class PersonalInfoAPIDestroy(generics.RetrieveDestroyAPIView):

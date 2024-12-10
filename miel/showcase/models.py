@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model() # забираем кастомную модель
 
 
+
 class Office(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
@@ -48,6 +49,11 @@ class PersonalInfo(models.Model):
         return f'{self.first_name} {self.last_name}'
 
 
+class Invitations(models.Model):
+    office = models.ForeignKey("Office", on_delete=models.CASCADE)
+    status = models.ForeignKey("Status", on_delete=models.CASCADE)
+
+
 class Course(models.Model):
     name = models.CharField(blank=True, null=True, max_length=50)
     progress = models.IntegerField()
@@ -70,8 +76,7 @@ class CandidateCard(User):
     objects_card = models.IntegerField(verbose_name='Объекты', null=True, blank=True)
     clients_card = models.IntegerField(verbose_name='Клиенты', null=True, blank=True)
 
-    invitation_to_office = models.ForeignKey(Office, null=True, blank=True, on_delete=models.SET_NULL)
-    status = models.ForeignKey(Status, null=True, blank=True, on_delete=models.SET_NULL)  # TODO доработать статусы
+    invitation_to_office = models.ForeignKey('Invitations', null=True, blank=True, on_delete=models.SET_NULL)
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
 
