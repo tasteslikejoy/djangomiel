@@ -42,7 +42,7 @@ from .serializers import PersonalInfoSerializer
 class PersonalInfoAPIList(generics.ListCreateAPIView):
     queryset = PersonalInfo.objects.all()
     serializer_class = PersonalInfoSerializer
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class PersonalInfoAPIUpdate(generics.RetrieveUpdateAPIView  ):

@@ -51,6 +51,8 @@ from rest_framework import routers
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api/v1/', include(router.urls)),
+    path('api/v1/drf-auth/', include('rest_framework.urls')),
+
     path('api/v1/personal_info/', PersonalInfoAPIList.as_view()),
     path('api/v1/personal_info/<int:pk>/', PersonalInfoAPIUpdate.as_view()),
     path('api/v1/personal_info_delete/<int:pk>/', PersonalInfoAPIDestroy.as_view())
