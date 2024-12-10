@@ -21,23 +21,3 @@ class PersonalInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonalInfo
         fields = "__all__"
-
-
-
-
-
-
-# def encode():
-#     model = CandidateCardModel('Semen', 'Firsov')
-#     model_sr = PersonalInfoSerializer(model)
-#     print(model_sr.data, type(model_sr.data), sep='\n')
-#     json = JSONRenderer().render(model_sr.data)
-#     print(json)
-#
-#
-# def decode():
-#     stream = io.BytesIO(b'{"first_name":"Semen","last_name":"Firsov"}')
-#     data = JSONParser().parse(stream)
-#     serializer = PersonalInfoSerializer(data=data)
-#     serializer.is_valid()
-#     print(serializer.validated_data)

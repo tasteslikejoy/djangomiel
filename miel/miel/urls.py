@@ -26,28 +26,34 @@ from rest_framework import routers
 #     off = Office.objects.all()
 #     return Response({'off': [c.name for c in off]})
 
-class MyCustomRouter(routers.SimpleRouter):
-    routes = [
-        routers.Route(url=r'^{prefix}$',
-                      mapping={'get': 'list'},
-                      name='{basename}-list',
-                      detail=False,
-                      initkwargs={'suffix': 'List'}),
-        routers.Route(url=r'^{prefix}/{lookup}$',
-                      mapping={'get': 'retrieve'},
-                      name='{basename}-detail',
-                      detail=True,
-                      initkwargs={'suffix': 'Detail'})
-    ]
+# class MyCustomRouter(routers.SimpleRouter):
+#     routes = [
+#         routers.Route(url=r'^{prefix}$',
+#                       mapping={'get': 'list'},
+#                       name='{basename}-list',
+#                       detail=False,
+#                       initkwargs={'suffix': 'List'}),
+#         routers.Route(url=r'^{prefix}/{lookup}$',
+#                       mapping={'get': 'retrieve'},
+#                       name='{basename}-detail',
+#                       detail=True,
+#                       initkwargs={'suffix': 'Detail'})
+#     ]
 
 
-router = MyCustomRouter()
-router.register(r'personal_info', PersonalInfoViewSet, basename='personal_info')
-print(router.urls)
+# router = MyCustomRouter()
+# router.register(r'personal_info', PersonalInfoViewSet, basename='personal_info')
+# print(router.urls)
+
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include(router.urls)),
+    # path('api/v1/', include(router.urls)),
+    path('api/v1/personal_info/', PersonalInfoAPIList.as_view()),
+    path('api/v1/personal_info/<int:pk>/', PersonalInfoAPIUpdate.as_view()),
+    path('api/v1/personal_info_delete/<int:pk>/', PersonalInfoAPIDestroy.as_view())
     # path('api/v1/personal_info_card/', PersonalInfoViewSet.as_view({'get': 'list'})),
     # path('api/v1/personal_info_card/<int:pk>/', PersonalInfoViewSet.as_view({'get': 'update'})),
 
