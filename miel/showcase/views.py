@@ -12,7 +12,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from .models import PersonalInfo, CandidateCard, Office
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
-from .serializers import PersonalInfoSerializer
+from .serializers import PersonalInfoSerializer, OfficeSerializer
 
 
 # class CardCandidateAPIView(generics.ListAPIView):
@@ -40,17 +40,17 @@ from .serializers import PersonalInfoSerializer
 #     def candidate_office(self, request, pk=None):
 #         office_cand = Office.objects.get(pk=pk)
 #         return Response({'office_cand': office_cand.name})
-class PersonalInfoAPIListPagination(PageNumberPagination):
-    page_size = 2
-    page_size_query_param = 'page_size'
-    max_page_size = 10000
 
+# class PersonalInfoAPIListPagination(PageNumberPagination):
+#     page_size = 2
+#     page_size_query_param = 'page_size'
+#     max_page_size = 10000
 
 class PersonalInfoAPIList(generics.ListCreateAPIView):
     queryset = PersonalInfo.objects.all()
     serializer_class = PersonalInfoSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    pagination_class = PersonalInfoAPIListPagination
+    # pagination_class = PersonalInfoAPIListPagination
 
 
 class PersonalInfoAPIUpdate(generics.RetrieveUpdateAPIView  ):
@@ -65,3 +65,21 @@ class PersonalInfoAPIDestroy(generics.RetrieveDestroyAPIView):
     serializer_class = PersonalInfoSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
+
+class OfficeListAPI(generics.ListAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
+    # permission_classes = (IsAuthenticated,)
+
+
+class OfficeAPIDestroy(generics.RetrieveDestroyAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+
+class OfficeAPIUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeSerializer
+    permission_classes = (IsAuthenticated,)
+    # authentication_classes = (TokenAuthentication,)

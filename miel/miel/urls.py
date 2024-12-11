@@ -54,8 +54,14 @@ urlpatterns = [
     path('api/v1/drf-auth/', include('rest_framework.urls')),
 
     path('api/v1/personal_info/', PersonalInfoAPIList.as_view()),
+    path('api/v1/office/', OfficeListAPI.as_view()),
+
     path('api/v1/personal_info/<int:pk>/', PersonalInfoAPIUpdate.as_view()),
+    path('api/v1/office/<int:pk>/', OfficeAPIUpdate.as_view()),
+
     path('api/v1/personal_info_delete/<int:pk>/', PersonalInfoAPIDestroy.as_view()),
+    path('api/v1/office_delete/<int:pk>/', OfficeAPIDestroy.as_view()),
+
     path('api/v1/auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
     path('api/v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

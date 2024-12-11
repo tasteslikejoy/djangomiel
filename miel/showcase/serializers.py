@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.parsers import JSONParser
 from rest_framework.renderers import JSONRenderer
 
-from .models import PersonalInfo, CandidateCard
+from .models import PersonalInfo, Office
 
 
 # class CandidateCardModel:
@@ -20,4 +20,10 @@ from .models import PersonalInfo, CandidateCard
 class PersonalInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonalInfo
+        fields = "__all__"
+
+
+class OfficeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Office
         fields = "__all__"

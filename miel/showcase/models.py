@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model() # забираем кастомную модель
 
 
-
 class Office(models.Model):
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
