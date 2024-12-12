@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 User = get_user_model() # забираем кастомную модель
 
 
-
 class Quota(models.Model):
     quantity = models.IntegerField(null=True, blank=True)
     default = models.IntegerField(null=True, blank=True)
@@ -30,7 +29,7 @@ class Status(models.Model):
 class Experience(models.Model):
     workplace = models.CharField(max_length=255, null=True, blank=True)
     occupation = models.CharField(max_length=255, null=True, blank=True)
-    date_start = models.DateTimeField(null=True, blank=True)
+    date_start = models.DateField(null=True, blank=True)
     date_end = models.DateField(null=True, blank=True)
 
 
@@ -53,7 +52,6 @@ class PersonalInfo(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=50)
-    progress = models.IntegerField()
 
 
 class Skill(models.Model):
@@ -89,6 +87,7 @@ class Invitations(models.Model):
 class CandidateCourse(models.Model):
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    progress = models.IntegerField(default=0, blank=True)
 
 
 class CandidateSkill(models.Model):
