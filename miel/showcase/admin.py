@@ -7,6 +7,7 @@ from .models import CandidateCard, PersonalInfo, Status, Experience
 @admin.register(PersonalInfo)
 class PersonalInfoAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'email',
         'phone',
         'contact_link',
@@ -22,6 +23,7 @@ class PersonalInfoAdmin(admin.ModelAdmin):
 @admin.register(Experience)
 class ExperienceAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'workplace',
         'occupation',
         'date_start',
@@ -55,22 +57,22 @@ class CandidateCardAdmin(admin.ModelAdmin):
 
     get_course.short_description = 'Courses'
     get_skills.short_description = 'Skills'
-
     list_display = (
-        'created_at',
-        'current_workplace',
-        'current_occupation',
-        'employment_date',
-        'synopsis',
-        'invitations',  #
-        'status',
-        'experience',
-        'get_course',
-        'get_skills',
+        'id',
         'personal_info__first_name',
         'personal_info__last_name',
         'personal_info__email',
+        'created_at',
+        'invitations',  #
+        'current_workplace',
+        'current_occupation',
+        'employment_date',
+        'get_course',
+        'get_skills',
+        'synopsis',
+        'experience',
     )
+
     search_fields = (
         'created_at',
         'personal_info__first_name',

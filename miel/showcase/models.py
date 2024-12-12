@@ -77,8 +77,8 @@ class CandidateCard(models.Model):
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL)
     personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE)
 
-    course = models.ManyToManyField('CandidateCourse', null=True, blank=True)
-    skills = models.ManyToManyField('CandidateSkill', null=True, blank=True)
+    course = models.ManyToManyField('CandidateCourse')
+    skills = models.ManyToManyField('CandidateSkill')
 
 
 class Invitations(models.Model):

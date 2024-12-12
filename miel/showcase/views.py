@@ -30,7 +30,7 @@ User = get_user_model()
 
 class CardTestApiView(ListCreateAPIView):
     queryset = CandidateCard.objects.all().prefetch_related()
-    # permission_classes = [IsSuperviser]
+    permission_classes = [IsSuperviser]
     serializer_class = CandidateCardSerializer
     #
     # def get(self, request, *args, **kwargs):
