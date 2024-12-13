@@ -67,7 +67,7 @@ class PersonalInfo(models.Model):
         male = 'male', 'мужской'
         female = 'female', 'женский'
 
-    email = models.EmailField(null=True, blank=True, verbose_name='Почта')
+    email = models.EmailField(null=True, blank=True, verbose_name='Почта')  # TODO обсудить уникальность поля
     phone = models.CharField(max_length=30, null=True, blank=True, verbose_name='Телефон')
     contact_link = models.CharField(max_length=255, null=True, blank=True, verbose_name='Связь с кандидатом')
     first_name = models.CharField(max_length=50, verbose_name='Имя')
@@ -87,7 +87,6 @@ class PersonalInfo(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
-    progress = models.IntegerField(verbose_name='Прогресс')
 
     class Meta:
         verbose_name = 'Курсы'
@@ -149,6 +148,8 @@ class Invitations(models.Model):
 
 
 class CandidateCourse(models.Model):
+    progress = models.IntegerField(default=0, verbose_name='Прогресс')
+
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 

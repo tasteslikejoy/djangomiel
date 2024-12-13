@@ -3,18 +3,20 @@ from .models import CandidateCard, Status, Office
 
 
 # Проверяет наличие статуса и сколько карточек к нему привязаны
-class CandidateStatusSerializer(serializers.Serializer):
-    status_id = serializers.IntegerField()
-    count = serializers.IntegerField()
+class CandidateStatusSerializer(serializers.ModelSerializer):
+    candidate_card_count = serializers.SerializerMethodField()
 
-    def validate_status_id(self, pk):
-        if not Status.objects.filter(id=pk).exists():
-            raise serializers.ValidationError('Ошибка. Статуса не существует.')
-        return pk
+    class Meta:
+        model = Status
+        fields = ['id', 'name', 'candidate_card_count']
+
+    def get_candidate_card_count(self, obj):
+        return CandidateCard.objects.filter(invitation_to_office__status=obj).count()
+
 
 
 # Сколько офисов требуют квоту
-class OfficeQuotaSerializer(serializers.Serializer):
+class OfficeQuotaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Office
         fields = ['id', 'name', 'quota']
@@ -24,11 +26,11 @@ class OfficeQuotaSerializer(serializers.Serializer):
 
 
 # Всего кандидатов в базе
-class CandidateAllSerializer(serializers.Serializer):
+class CandidateAllSerializer(serializers.ModelSerializer):
     count = serializers.IntegerField()
 
 
 # Всего офисов в базе
-class OfficeAllSerializer(serializers.Serializer):
+class OfficeAllSerializer(serializers.ModelSerializer):
     count = serializers.IntegerField()
 
