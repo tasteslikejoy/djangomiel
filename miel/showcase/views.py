@@ -33,12 +33,14 @@ class CandidateAllView(APIView):
 # Всего офисов в базе
 class OfficeAllView(APIView):
     def get(self, request):
-        count = Office.objects.count()
-        serializer = OfficeAllSerializer(data={'count': count})
-        if serializer.is_valid():
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        offices = Office.objects.all()
+        office_count = offices.count()
+        serializer = OfficeAllSerializer(offices, many=True)
+        data = {
+            'count': office_count,
+            'offices': serializer.data
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 

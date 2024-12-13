@@ -32,5 +32,7 @@ class CandidateAllSerializer(serializers.ModelSerializer):
 
 # Всего офисов в базе
 class OfficeAllSerializer(serializers.ModelSerializer):
-    count = serializers.IntegerField()
+    class Meta:
+        model = Office
+        fields = ['id', 'name', 'location', 'link_to_admin', 'superviser', 'quota']
 
