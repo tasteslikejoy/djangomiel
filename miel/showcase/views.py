@@ -17,7 +17,7 @@ class CandidateCountView(APIView):
 class OfficeCountView(APIView):
     def get(self, request):
         count = Office.objects.filter(quota__need__gt=0).count()
-        return Response({'office_count_not_zero': count}, status=status.HTTP_200_OK)
+        return Response({'office_count_not_zero': count}, status=status.HTTP_200_OK)  # TODO
 
 
 # Всего кандидатов в базе
@@ -40,7 +40,7 @@ class OfficeAllView(APIView):
             'count': office_count,
             'offices': serializer.data
         }
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
 
 
 

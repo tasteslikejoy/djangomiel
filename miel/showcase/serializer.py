@@ -15,7 +15,7 @@ class CandidateStatusSerializer(serializers.ModelSerializer):
 
 
 # Всего кандидатов в базе
-class CandidateAllSerializer(serializers.ModelSerializer):
+class CandidateAllSerializer(serializers.Serializer):
     count = serializers.IntegerField()
 
 
