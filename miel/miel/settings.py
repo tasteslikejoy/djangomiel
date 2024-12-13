@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'showcase',
     'rest_framework',
     'djoser',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -166,7 +167,8 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'TOKEN_MODEL': None,  # Setup for JWT
     'SERIALIZERS': {
-        'user_create': 'users.serializers.UserRegistrationSerializer'
+        'user_create': 'users.serializers.UserRegistrationSerializer',
+        'user': 'users.serializers.UserSerializer',
     },
     'PERMISSIONS': {
         'activation': ['rest_framework.permissions.AllowAny'],

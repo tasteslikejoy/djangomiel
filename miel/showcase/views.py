@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView, status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework import viewsets
+
+from rest_framework.pagination import LimitOffsetPagination
 
 from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
 from .models import CandidateCard
@@ -28,16 +31,79 @@ User = get_user_model()
 #         })
 
 
-class CardTestApiView(ListCreateAPIView):
-    queryset = CandidateCard.objects.all().prefetch_related()
+class CardTestApiView(ListCreateAPIView):  # TODO убрать
+    queryset = CandidateCard.objects.all()
     permission_classes = [IsSuperviser]
     serializer_class = CandidateCardSerializer
-    #
-    # def get(self, request, *args, **kwargs):
-    #     cards = CandidateCard.objects.all()
-    #     serializer = CandidateCardSerializer(cards, many=True)
-    #
-    #     return Response({
-    #         'status': status.HTTP_200_OK,
-    #         'data': serializer.data,
-    #     })
+    pagination_class = LimitOffsetPagination
+
+
+class CandidateCardViewset(viewsets.ModelViewSet):
+    queryset = CandidateCard.objects.all()
+    permission_classes = [IsSuperviser | IsAdministrator]
+    pagination_class = LimitOffsetPagination
+    serializer_class = CandidateCardSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.user.get_role() != User.UserRoles.administrator:
+            return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Method not allowed.'
+            })
+        else:
+            return super().create(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        if request.user.get_role() != User.UserRoles.administrator:
+            return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Method not allowed.'
+            })
+        else:
+            return super().partial_update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Method not allowed.'
+            })
+
+    def destroy(self, request, *args, **kwargs):
+        if request.user.get_role() != User.UserRoles.administrator:
+            return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Method not allowed.'
+            })
+        else:
+            return super().destroy(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):  # Нужна ли детализация?
+        return super().retrieve(request, *args, **kwargs)
+
+
+class UserShowcaseRedirectView(APIView):
+    permission_classes = [IsSuperviser | IsAdministrator]
+
+    def get(self, request):
+        user = request.user
+        if user.get_role() == user.UserRoles.superviser:
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': f'Вы вошли на страницу для роли {user.UserRoles.superviser.label}',
+                'info': f'{user.get_role()}, {user.UserRoles.superviser}'
+            })
+        elif user.get_role() == user.UserRoles.administrator:
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': f'Вы вошли на страницу для роли {user.UserRoles.administrator.label}',
+                'info': f'{user.get_role()}, {user.UserRoles.administrator}'
+            })
+        elif user.get_role() == user.UserRoles.staff:
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': f'Вы вошли на страницу для роли {user.UserRoles.staff.label}',
+                'info': f'{user.get_role()}, {user.UserRoles.staff}'
+            })

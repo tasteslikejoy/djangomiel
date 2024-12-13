@@ -16,11 +16,4 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'{count} records was successfully deleted from database.'))
         else:
             self.stdout.write(self.style.NOTICE('The are no extrernal files with data operate with.'))
-        pass
-        # count = clear_role_db()
-        # self.stdout.write(self.style.SUCCESS(
-        #     f'{count} records deleted from the database.\nЗаписи Ролей в количестве {count} шт. удалены из базы данных.'))
-        #
-        # self.stdout.write(self.style.SUCCESS(
-        #     'Initialize db command executed successfully.\nКоманда инициализации базы данных выполнена успешно.'))
 

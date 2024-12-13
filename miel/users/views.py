@@ -24,3 +24,11 @@ class TestApiView(APIView):
             'status': status.HTTP_200_OK,
             'data': serializer.data,
         })
+
+
+# class CandidateCardViewset(viewsets.ModelViewSet):
+#     queryset = CandidateCard.objects.all()
+#     permission_classes = [IsSuperviser | IsAdministrator]
+#     pagination_class = LimitOffsetPagination
+#     serializer_class = CandidateCardSerializer
+#     http_method_names = ['GET']

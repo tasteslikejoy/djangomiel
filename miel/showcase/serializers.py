@@ -84,9 +84,7 @@ class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
     class Meta:
         model = CandidateCard
         fields = '__all__'
-
-    def create(self, validated_data):
-        return super().create(validated_data)
+        read_only_fields = ('id',)
 
 
 """class DataitemSerializer(serializers.ModelSerializer):

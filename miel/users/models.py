@@ -29,6 +29,12 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    class UserRoles(models.TextChoices):
+        administrator = 'admin', 'Администратор'
+        staff = 'staff', 'БигБосс'
+        superviser = 'superviser', 'Руководитель'
+        superadmin = 'superadmin', 'СуперАдминистратор'
+
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=30, null=True, blank=True)
     first_name = models.CharField(max_length=50)
@@ -49,7 +55,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
+    def get_role(self):
+        role = User.UserRoles.staff
+        if self.is_staff:
+            role = User.UserRoles.staff
+        elif not any([self.is_superadmin, self.is_admin]):
+            role = User.UserRoles.superviser
+        elif self.is_superadmin:
+            role = User.UserRoles.superadmin
+        elif self.is_admin:
+            role = User.UserRoles.administrator
 
-
-
-
+        return role

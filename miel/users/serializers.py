@@ -17,15 +17,18 @@ class UserRegistrationSerializer(BaseUserRegistrationSerializer):
             'middle_name',
             'contact_link',
             'password',
+            'is_superadmin',
+            'is_admin',
         )
 
 
 class UserSerializer(serializers.ModelSerializer):
-    role = serializers.SerializerMethodField()
+    role = serializers.CharField(source='get_role')
 
     class Meta:
         model = User
         fields = (
+            'id',
             'email',
             'phone',
             'first_name',
@@ -34,16 +37,3 @@ class UserSerializer(serializers.ModelSerializer):
             'contact_link',
             'role',
         )
-
-    def get_role(self, obj):
-        role = None
-        if obj.is_staff:
-            role = 'БигБосс'
-        elif not all([obj.is_superadmin, obj.is_admin]):
-            role = 'Руководитель'
-        elif obj.is_superadmin:
-            role = 'СуперАдминистратор'
-        elif obj.is_admin:
-            role = 'Администратор'
-
-        return role
