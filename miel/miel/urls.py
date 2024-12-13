@@ -16,12 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from showcase.views import CandidateCountView
+from showcase.views import CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls.jwt')),
     path('auth/', include('djoser.urls')),
-    path('api/v1/<int:status_id>', CandidateCountView.as_view(), name='candidate_status_count')
+    path('api/v1/<int:status_id>', CandidateCountView.as_view(), name='candidate_status_count'), # сколько кандидатов на статус
+    path('api/v1/office-count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
+    path('api/v1/candidate-count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов
+    path('api/v1/office_all-count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов
 ]

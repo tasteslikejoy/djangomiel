@@ -10,7 +10,7 @@ from .models import *
 
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity']
+    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity', 'get_quota_need']
     list_display_links = ['name']
     list_filter = ['id']
     search_fields = ['name']
@@ -19,6 +19,12 @@ class OfficeAdmin(admin.ModelAdmin):
         return obj.quota.quantity if obj.quota else None
 
     get_quota_quantity.short_description = 'Квота на текущий месяц'
+
+    def get_quota_need(self, obj):
+        return obj.quota.need if obj.quota else None
+
+    get_quota_need.short_description = 'Потребность по квоте'
+
 
 @admin.register(Status)
 class StatusAdmin(admin.ModelAdmin):
