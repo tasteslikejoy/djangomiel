@@ -14,17 +14,6 @@ class CandidateStatusSerializer(serializers.ModelSerializer):
         return CandidateCard.objects.filter(invitation_to_office__status=obj).count()
 
 
-
-# Сколько офисов требуют квоту
-class OfficeQuotaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Office
-        fields = ['id', 'name', 'quota']
-
-    def get_queryset_not_zero(self):
-        return Office.objects.filter(quota__need__gt=0).count()
-
-
 # Всего кандидатов в базе
 class CandidateAllSerializer(serializers.ModelSerializer):
     count = serializers.IntegerField()
@@ -35,4 +24,7 @@ class OfficeAllSerializer(serializers.ModelSerializer):
     class Meta:
         model = Office
         fields = ['id', 'name', 'location', 'link_to_admin', 'superviser', 'quota']
+
+    def get_queryset_not_zero(self):
+        return Office.objects.filter(quota__need__gt=0).count()
 
