@@ -5,7 +5,7 @@ from .views import *
 
 router = routers.DefaultRouter()
 router.register(r'candidat', views.CandidateCardViewSet)
-
+router.register(r'candidatdirektor', views.CandidateCardViewSetDirektor)
 
 urlpatterns = [
     path('', include(router.urls)),
