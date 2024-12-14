@@ -142,6 +142,8 @@ class AdminShowcaseViewSet(viewsets.ModelViewSet):
     filterset_fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
                         'comment', 'favorite', 'archived', 'synopsis', 'objects_card', 'clients_card',
                         'invitation_to_office', 'experience', 'personal_info']
+    http_method_names = ['get']
+
 
     # def get_queryset(self):
     #     user = self.request.user
@@ -159,6 +161,7 @@ class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
     serializer_class = SuperviserShowcaseSerializer
     # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ['id', 'created_at', 'current_workplace', 'personal_info']
+    http_method_names = ['get']
 
     # def get_queryset(self):
     #     user = self.request.user
