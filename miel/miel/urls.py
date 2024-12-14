@@ -1,6 +1,4 @@
 """
-URL configuration for miel project.
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
 Examples:
@@ -25,7 +23,9 @@ from django.urls import path, include, re_path
 from users.views import CreateAdminUserViewset
 from showcase.views import CardTestApiView, UserShowcaseRedirectView, CandidateCardViewset, TestApiView
 from showcase.views import CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView
+
 from showcase.views import *  # ПОПРАВИТЬ!!!!ЙЙЙЙЙЙ
+from showcase.views import CandidateCardViewSet, CandidateCardViewSetDirektor  # Валераааа
 
 
 from rest_framework.routers import DefaultRouter
@@ -35,6 +35,10 @@ app_name = 'miel'
 router = DefaultRouter()
 router.register(r'cards', CandidateCardViewset, basename='cards')
 router.register(r'admin_create', CreateAdminUserViewset, basename='admin_create')
+
+# Валераааа
+router.register(r'candidat_list', CandidateCardViewSet, basename='candidat_list')
+router.register(r'candidatdirektor_list', CandidateCardViewSetDirektor, basename='candidatdirektor_list')
 
 # router = MyCustomRouter()
 # router.register(r'personal_info', PersonalInfoViewSet, basename='personal_info')
@@ -74,7 +78,6 @@ urlpatterns = [
     path('api/v1/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     # path('api/v1/personal_info_card/', PersonalInfoViewSet.as_view({'get': 'list'})),
     # path('api/v1/personal_info_card/<int:pk>/', PersonalInfoViewSet.as_view({'get': 'update'})),
-
 ]
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

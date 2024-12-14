@@ -1,3 +1,4 @@
+import django_filters
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from rest_framework.decorators import action
@@ -15,6 +16,8 @@ from .models import CandidateCard, Office, Status
 from .serializers import CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
 
 from .serializers import PersonalInfoSerializer, OfficeSerializer  # TODO чек!
+from .serializers import CandidateCardSerializer, CandidateCardSerializerDirektor  # Валераааа
+
 
 
 
@@ -165,3 +168,37 @@ class OfficeAllView(APIView):
             'offices': serializer.data
         }
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
+
+# Валераааа
+
+
+class CandidateCardViewSet(viewsets.ModelViewSet):
+    queryset = CandidateCard.objects.all().order_by('id')
+    serializer_class = CandidateCardSerializer
+    filterset_fields = ['id','created_at','current_workplace','current_occupation','employment_date',
+                  'comment','favorite','archived','synopsis','objects_card','clients_card',
+                  'invitation_to_office','experience','personal_info']
+
+    def get_queryset(self):
+        if self.request.user.id is admin:
+            queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+        else:
+            queryset = None
+        #queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+        return queryset
+
+
+class CandidateCardViewSetDirektor(viewsets.ModelViewSet):
+    serializer_class = CandidateCardSerializerDirektor
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['id','created_at','current_workplace','personal_info']
+
+    def get_queryset(self):
+        if self.request.user.id is admin:
+            queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+        elif self.request.user.id is direktor:
+            queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+        else:
+            queryset = None
+        #queryset = CandidateCard.objects.filter(id__in=[2,3]).order_by('created_at','favorite')
+        return queryset
