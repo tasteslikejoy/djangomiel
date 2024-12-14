@@ -20,10 +20,6 @@ class UserAdmin(admin.ModelAdmin):
 
 
 
-
-
-
-
     # list_filter = ('is_staff', 'is_active',)
     #
     # def save_model(self, request, obj, change, form):
@@ -35,4 +31,3 @@ class UserAdmin(admin.ModelAdmin):
     #         message = f'Добрый день!\nВаш логин: {obj.email}\nВаш временный пароль: {obj.password}'
     #         sub_list = obj.email
     #         send_email(title, message, sub_list)
-

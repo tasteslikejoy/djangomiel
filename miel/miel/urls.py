@@ -22,6 +22,7 @@ from django.urls import path, include
 # from users.views import CreateAdminUserView
 from users.views import CreateAdminUserViewset
 from showcase.views import CardTestApiView, UserShowcaseRedirectView, CandidateCardViewset, TestApiView
+from showcase.views import CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView
 
 from rest_framework.routers import DefaultRouter
 
@@ -40,6 +41,11 @@ urlpatterns = [
     path('test/', TestApiView.as_view(), name='test_api'),  # Тест редиректа
     path('test_cards/', CardTestApiView.as_view(), name='card_test_api'),
     path('showcase/', UserShowcaseRedirectView.as_view(), name='showcase_user_redirect')
+    
+    path('api/v1/', CandidateCountView.as_view(), name='candidate_status_count'), # сколько кандидатов на статус
+    path('api/v1/office-count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
+    path('api/v1/candidate-count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов
+    path('api/v1/office_all-count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов
 ]
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

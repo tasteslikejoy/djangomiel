@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'showcase',
+    'administrator',
+    'superviser',
+
     'rest_framework',
     'djoser',
     'django_filters',
