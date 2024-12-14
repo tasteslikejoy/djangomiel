@@ -2,11 +2,11 @@ from django.contrib import admin
 from .models import *
 
 
-# @admin.register(Quota)
-# class QuotaAdmin(admin.ModelAdmin):
-#     list_display = ['quantity', 'default', 'used', 'need', 'date']
-#     list_editable = ['default', 'used', 'need', 'quantity']
-#     list_display_links = ['date']
+@admin.register(Quota)
+class QuotaAdmin(admin.ModelAdmin):
+    list_display = ['quantity', 'default', 'used', 'need', 'date']
+    list_editable = ['default', 'used', 'need', 'quantity']
+    list_display_links = ['date']
 
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
@@ -33,18 +33,18 @@ class StatusAdmin(admin.ModelAdmin):
     list_filter = ['id']
     search_fields = ['name']
 
-# @admin.register(Experience)
-# class ExperienceAdmin(admin.ModelAdmin):
-#     list_display = ['workplace', 'occupation', 'date_start', 'date_end']
+@admin.register(Experience)
+class ExperienceAdmin(admin.ModelAdmin):
+    list_display = ['workplace', 'occupation', 'date_start', 'date_end']
 
-# @admin.register(PersonalInfo)
-# class PersonalInfoAdmin(admin.ModelAdmin):
-#     list_display = [
-#         'id', 'last_name', 'first_name',
-#         'middle_name', 'email', 'phone',
-#         'city', 'date_of_birth'
-#     ]
-#     list_display_links = ['last_name']
+@admin.register(PersonalInfo)
+class PersonalInfoAdmin(admin.ModelAdmin):
+    list_display = [
+        'id', 'last_name', 'first_name',
+        'middle_name', 'email', 'phone',
+        'city', 'date_of_birth'
+    ]
+    list_display_links = ['last_name']
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
@@ -71,9 +71,9 @@ class CandidateCardAdmin(admin.ModelAdmin):
     list_display_links = ['personal_info']
     list_editable = ['favorite', 'archived']
 
-# @admin.register(Invitations)
-# class InvitationsAdmin(admin.ModelAdmin):
-#     list_display = ['office', 'status']
+@admin.register(Invitations)
+class InvitationsAdmin(admin.ModelAdmin):
+    list_display = ['office', 'status']
 
 
 
