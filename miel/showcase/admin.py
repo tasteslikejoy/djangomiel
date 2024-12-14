@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import CandidateCard, PersonalInfo, Status, Experience
-from .models import *  # Поправить
+from .models import *  # Поправить!!!ЙЙййй!
 
 # Register your models here.
 

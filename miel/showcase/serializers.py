@@ -35,7 +35,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
 
 
 class PersonalInfoSerializer(serializers.ModelSerializer):
-    gender = serializers.ChoiceField(PersonalInfo.Genders)
+    gender = serializers.ChoiceField(PersonalInfo.Genders, source='get_gender_display')  # TODO чекнуть
     email = serializers.EmailField()
     contact_link = serializers.CharField(allow_blank=True, required=False)
 
@@ -85,28 +85,6 @@ class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
         model = CandidateCard
         fields = '__all__'
         read_only_fields = ('id',)
-
-
-"""class DataitemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Dataitem
-
-    # Nested serializer
-    mod = AssetModelSerializer()
-
-    # Custom create()
-    def create(self, validated_data):
-        # First we create 'mod' data for the AssetModel
-        mod_data = validated_data.pop('mod')
-        asset_model = AssetModel.objects.create(**mod_data)
-
-        # Now we create the Dataitem and set the Dataitem.mod FK
-        dataitem = Dataitem.objects.create(mod=asset_model, **validated_data)
-
-        # Return a Dataitem instance
-        return dataitem
-"""
-
 
 #  By default, relational fields that target a
 #  ManyToManyField with a through model specified are set to read-only.

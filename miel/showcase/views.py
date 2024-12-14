@@ -15,6 +15,9 @@ from .models import CandidateCard, Office, Status
 from .serializers import CandidateCardSerializer
 from .serializer import CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
 
+from .serializers import PersonalInfoSerializer, OfficeSerializer  # TODO чек!
+
+
 
 User = get_user_model()
 

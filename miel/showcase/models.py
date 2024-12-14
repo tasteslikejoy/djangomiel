@@ -84,6 +84,14 @@ class PersonalInfo(models.Model):
     def __str__(self):
         return f'{self.last_name} {self.first_name} {self.middle_name}'
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
+
+class Invitations(models.Model):
+    office = models.ForeignKey("Office", on_delete=models.CASCADE)
+    status = models.ForeignKey("Status", on_delete=models.CASCADE)
+
 
 class Course(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
