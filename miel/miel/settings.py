@@ -44,10 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'showcase',
-    'administrator',
-    'superviser',
-
+    # 'administrator',
+    # 'superviser',
     'rest_framework',
+    'drf_spectacular',
     'djoser',
     'django_filters',
 ]
@@ -168,7 +168,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.FileUploadParser',
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    # 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 DJOSER = {

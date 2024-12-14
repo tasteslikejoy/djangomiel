@@ -1,6 +1,8 @@
 import django_filters
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema, extend_schema_serializer, extend_schema_view
 from rest_framework.decorators import action
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework.views import APIView, status
 from rest_framework import viewsets
@@ -69,7 +71,7 @@ class CandidateCardViewset(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
     @action(detail=True, methods=['patch'])
-    def set_favorite(self, request, pk=None):
+    def set_favorite(self, request, pk=None):  # FIXME переделать логику см. правки
         card = self.get_object()
         card.favorite = True
         card.save()
@@ -80,6 +82,7 @@ class CandidateCardViewset(viewsets.ModelViewSet):
 
 
 class UserShowcaseRedirectView(APIView):  # TODO доделать ссылки на редирект
+    """Основное URL для автоматического перехода на нужное представление Витрины Кандидатов """
     permission_classes = [IsSuperviser | IsAdministrator]
 
     def get(self, request):
@@ -144,6 +147,8 @@ class AdminShowcaseViewSet(viewsets.ModelViewSet):
                         'invitation_to_office', 'experience', 'personal_info']
     http_method_names = ['get']
 
+    def retrieve(self, request, *args, **kwargs):  # FIXME
+        raise MethodNotAllowed('retrieve')
 
     # def get_queryset(self):
     #     user = self.request.user
@@ -162,6 +167,9 @@ class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
     # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ['id', 'created_at', 'current_workplace', 'personal_info']
     http_method_names = ['get']
+
+    def retrieve(self, request, *args, **kwargs):  # FIXME
+        raise MethodNotAllowed('retrieve')
 
     # def get_queryset(self):
     #     user = self.request.user
