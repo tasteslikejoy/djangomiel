@@ -27,6 +27,13 @@ class UserManager(BaseUserManager):
 
         return user
 
+    def create_superadmin(self, email, password, **kwargs):
+        user = self.create_user(email=email, password=password, **kwargs)
+        user.is_superadmin = True
+        user.save()
+
+        return user
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     class UserRoles(models.TextChoices):
