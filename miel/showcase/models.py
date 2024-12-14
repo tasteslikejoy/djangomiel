@@ -8,12 +8,13 @@ User = get_user_model() # забираем кастомную модель
 class Quota(models.Model):
     quantity = models.IntegerField(null=True, blank=True, verbose_name='Квота на текущий месяц')
     default = models.IntegerField(null=True, blank=True, verbose_name='Квота по дефолту')
-    used = models.IntegerField(null=True, blank=True, verbose_name='Использованная квота')
-    need = models.IntegerField(null=True, blank=True, verbose_name='Потребность по квоте')
+    used = models.IntegerField(default=0, blank=True, verbose_name='Использованная квота')
+    need = models.IntegerField(default=0, blank=True, verbose_name='Потребность по квоте')
     date = models.DateField(auto_now_add=True, verbose_name='Дата')
+    office = models.ForeignKey('Office', on_delete=models.CASCADE, verbose_name='Офис', related_name='quotas')
 
     class Meta:
-        verbose_name='Квоту'
+        verbose_name = 'Квоту'
         verbose_name_plural = 'Квоты'
 
     def __str__(self):
@@ -26,7 +27,7 @@ class Office(models.Model):
     link_to_admin = models.CharField(max_length=255, null=True, blank=True, verbose_name='Связь с админом')  # tastes_like_joy + t.me/
 
     superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='ФИО руководителя')
-    quota = models.ForeignKey(Quota, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Квота на текущий месяц')
+    # quota = models.ForeignKey(Quota, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Квота на текущий месяц')
 
     class Meta:
         verbose_name = 'Офис'

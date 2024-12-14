@@ -115,9 +115,9 @@ class CandidateCardAdmin(admin.ModelAdmin):
 
 @admin.register(Quota)
 class QuotaAdmin(admin.ModelAdmin):
-    list_display = ['quantity', 'default', 'used', 'need', 'date']
+    list_display = ['office', 'quantity', 'default', 'used', 'need', 'date']
     list_editable = ['default', 'used', 'need', 'quantity']
-    list_display_links = ['date']
+    list_display_links = ['office']
 
 
 @admin.register(Office)
@@ -128,12 +128,20 @@ class OfficeAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
     def get_quota_quantity(self, obj):
-        return obj.quota.quantity if obj.quota else None
+        if obj.quotas.all().exists():
+            quota = obj.quotas.all().last()
+            return quota.quantity
+        else:
+            return None
 
     get_quota_quantity.short_description = 'Квота на текущий месяц'
 
     def get_quota_need(self, obj):
-        return obj.quota.need if obj.quota else None
+        if obj.quotas.all().exists():
+            quota = obj.quotas.all().last()
+            return quota.need
+        else:
+            return None
 
     get_quota_need.short_description = 'Потребность по квоте'
 

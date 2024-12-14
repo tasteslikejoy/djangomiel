@@ -3,7 +3,7 @@ from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
 from .models import (CandidateCard, Office, Status, Experience, PersonalInfo, Course, Skill,
-                     CandidateCourse, CandidateSkill)
+                     CandidateCourse, CandidateSkill, Quota)
 
 User = get_user_model()
 
@@ -107,11 +107,26 @@ class CandidateAllSerializer(serializers.Serializer):
     count = serializers.IntegerField()
 
 
+class QuotaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quota
+        fields = (
+            'quantity',
+            'default',
+            'used',
+            'need',
+            'date',
+            'office'
+        )
+
+
 # Всего офисов в базе
 class OfficeAllSerializer(serializers.ModelSerializer):
+    quotas = QuotaSerializer(many=True, required=False)
+
     class Meta:
         model = Office
-        fields = ['id', 'name', 'location', 'link_to_admin', 'superviser', 'quota']
+        fields = ['id', 'name', 'location', 'link_to_admin', 'superviser', 'quotas']
 
     def get_queryset_not_zero(self):
         return Office.objects.filter(quota__need__gt=0).count()
