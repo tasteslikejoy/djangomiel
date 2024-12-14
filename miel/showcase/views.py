@@ -1,9 +1,8 @@
 import django_filters
 from django.contrib.auth import get_user_model
-from django.shortcuts import render
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.reverse import reverse_lazy, reverse
+from rest_framework.reverse import reverse_lazy
 from rest_framework.views import APIView, status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework import viewsets
@@ -13,38 +12,10 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
 from .models import CandidateCard, Office, Status
-from .serializers import CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
-
-from .serializers import PersonalInfoSerializer, OfficeSerializer  # TODO чек!
-from .serializers import CandidateCardSerializer, CandidateCardSerializerDirektor  # Валераааа
-
-
-
+from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
+                          OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer)
 
 User = get_user_model()
-
-
-# Create your views here.
-
-
-# class CardTestApiView(APIView):
-#     permission_classes = [IsSuperviser]
-#
-#     def get(self, request):
-#         cards = CandidateCard.objects.all()
-#         serializer = CandidateCardSerializer(cards, many=True)
-#
-#         return Response({
-#             'status': status.HTTP_200_OK,
-#             'data': serializer.data,
-#         })
-
-
-class CardTestApiView(ListCreateAPIView):  # TODO убрать
-    queryset = CandidateCard.objects.all()
-    permission_classes = [IsSuperviser]
-    serializer_class = CandidateCardSerializer
-    pagination_class = LimitOffsetPagination
 
 
 class CandidateCardViewset(viewsets.ModelViewSet):
@@ -73,9 +44,9 @@ class CandidateCardViewset(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         return Response({
-                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
-                'message': 'Method not allowed.'
-            })
+            'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+            'message': 'Method not allowed.'
+        })
 
     def destroy(self, request, *args, **kwargs):
         if request.user.get_role() != User.UserRoles.administrator:
@@ -103,33 +74,20 @@ class CandidateCardViewset(viewsets.ModelViewSet):
         })
 
 
-class UserShowcaseRedirectView(APIView):
+class UserShowcaseRedirectView(APIView):  # TODO доделать ссылки на редирект
     permission_classes = [IsSuperviser | IsAdministrator]
 
     def get(self, request):
         user = request.user
         if user.get_role() == user.UserRoles.superviser:
-            return Response({
-                'status': status.HTTP_200_OK,
-                'message': f'Вы вошли на страницу для роли {user.UserRoles.superviser.label}',
-                'info': f'{user.get_role()}, {user.UserRoles.superviser}'
-            })
+            return HttpResponseRedirect(reverse_lazy('showcase_superviser'))
         elif user.get_role() == user.UserRoles.administrator:
+            return HttpResponseRedirect(reverse_lazy('showcase_admin'))
+        elif user.get_role() == user.UserRoles.staff:
             return Response({
                 'status': status.HTTP_200_OK,
-                'message': f'Вы вошли на страницу для роли {user.UserRoles.administrator.label}',
-                'info': f'{user.get_role()}, {user.UserRoles.administrator}'
+                'message': f'Вы вошли на страницу для роли {user.UserRoles.staff.label}'
             })
-        elif user.get_role() == user.UserRoles.staff:
-            # return HttpResponseRedirect(reverse('miel:test_api'))
-            return HttpResponseRedirect(reverse_lazy('test_api'))
-
-
-class TestApiView(APIView):
-    def get(self, request):
-        return Response({
-            'You have been redirected'
-        })
 
 
 # Получение количества кандидатов, которым принадлежит статус
@@ -169,36 +127,42 @@ class OfficeAllView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
 
+
 # Валераааа
 
 
-class CandidateCardViewSet(viewsets.ModelViewSet):
+class AdminShowcaseViewSet(viewsets.ModelViewSet):
     queryset = CandidateCard.objects.all().order_by('id')
-    serializer_class = CandidateCardSerializer
-    filterset_fields = ['id','created_at','current_workplace','current_occupation','employment_date',
-                  'comment','favorite','archived','synopsis','objects_card','clients_card',
-                  'invitation_to_office','experience','personal_info']
+    serializer_class = AdminShowcaseSerializer
+    filterset_fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
+                        'comment', 'favorite', 'archived', 'synopsis', 'objects_card', 'clients_card',
+                        'invitation_to_office', 'experience', 'personal_info']
 
     def get_queryset(self):
-        if self.request.user.id is admin:
-            queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+        user = self.request.user
+        if user.get_role is user.UserRoles.administrator:
+            queryset = CandidateCard.objects.filter(
+                id__in=[2, 3]).order_by('created_at', 'favorite')  # FIXME переделать фильтр id на фильтр id статусов
         else:
             queryset = None
-        #queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+        # queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
         return queryset
 
 
-class CandidateCardViewSetDirektor(viewsets.ModelViewSet):
-    serializer_class = CandidateCardSerializerDirektor
+class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
+    serializer_class = SuperviserShowcaseSerializer
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filterset_fields = ['id','created_at','current_workplace','personal_info']
+    filterset_fields = ['id', 'created_at', 'current_workplace', 'personal_info']
 
     def get_queryset(self):
-        if self.request.user.id is admin:
-            queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
-        elif self.request.user.id is direktor:
-            queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+        user = self.request.user
+        if user.get_role is user.UserRoles.administrator:
+            queryset = CandidateCard.objects.filter(
+                id__in=[2, 3]).order_by('created_at', 'favorite')  # FIXME переделать фильтр id на фильтр id статусов
+        elif user.get_role is user.UserRoles.superviser:
+            queryset = CandidateCard.objects.filter(
+                id__in=[2, 3]).order_by('created_at', 'favorite')  # FIXME переделать фильтр id на фильтр id статусов
         else:
             queryset = None
-        #queryset = CandidateCard.objects.filter(id__in=[2,3]).order_by('created_at','favorite')
+        # queryset = CandidateCard.objects.filter(id__in=[2,3]).order_by('created_at','favorite')
         return queryset

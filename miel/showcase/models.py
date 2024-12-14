@@ -84,14 +84,6 @@ class PersonalInfo(models.Model):
     def __str__(self):
         return f'{self.last_name} {self.first_name} {self.middle_name}'
 
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}'
-
-
-class Invitations(models.Model):
-    office = models.ForeignKey("Office", on_delete=models.CASCADE)
-    status = models.ForeignKey("Status", on_delete=models.CASCADE)
-
 
 class Course(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
@@ -140,12 +132,16 @@ class CandidateCard(models.Model):
         verbose_name_plural = 'Карточка кандидата'
 
     def __str__(self):
-        return f'{self.personal_info.last_name} {self.personal_info.first_name} {self.personal_info.middle_name} ID: {self.id}'
+        return (f'{self.personal_info.last_name} '
+                f'{self.personal_info.first_name} '
+                f'{self.personal_info.middle_name} '
+                f'ID: {self.id}')
 
 
 class Invitations(models.Model):
     office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
     status = models.ForeignKey(Status, on_delete=models.CASCADE, verbose_name='Статус')
+
     class Meta:
         verbose_name = 'Приглашение'
         verbose_name_plural = 'Приглашение'
