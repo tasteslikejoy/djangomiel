@@ -12,8 +12,7 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
 from .models import CandidateCard, Office, Status
-from .serializers import CandidateCardSerializer
-from .serializer import CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
+from .serializers import CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
 
 from .serializers import PersonalInfoSerializer, OfficeSerializer  # TODO чек!
 
