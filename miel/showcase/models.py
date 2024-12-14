@@ -75,7 +75,7 @@ class PersonalInfo(models.Model):
     last_name = models.CharField(max_length=50, verbose_name='Фамилия')
     middle_name = models.CharField(max_length=50, verbose_name='Отчество')
     city = models.CharField(max_length=50, verbose_name='Город')
-    gender = models.CharField(choices=Genders, max_length=6, null=True, blank=True, verbose_name='Пол')
+    gender = models.CharField(choices=Genders, max_length=50, null=True, blank=True, verbose_name='Пол')
     date_of_birth = models.DateField(verbose_name='Дата рождения')
 
     class Meta:

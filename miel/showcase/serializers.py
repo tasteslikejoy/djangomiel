@@ -35,7 +35,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
 
 
 class PersonalInfoSerializer(serializers.ModelSerializer):
-    gender = serializers.ChoiceField(PersonalInfo.Genders, source='get_gender_display')  # TODO чекнуть
+    gender = serializers.ChoiceField(PersonalInfo.Genders)  # TODO чекнуть
     email = serializers.EmailField()
     contact_link = serializers.CharField(allow_blank=True, required=False)
 

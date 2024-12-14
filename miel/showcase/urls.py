@@ -27,15 +27,13 @@ router.register(r'cards', CandidateCardViewset, basename='cards')
 router.register(r'admin_create', CreateAdminUserViewset, basename='admin_create')
 
 # Валераааа
-router.register(r'showcase/admin', AdminShowcaseViewSet, basename='showcase_admin')
+router.register(r'showcase/administrator', AdminShowcaseViewSet, basename='showcase_administrator')
 router.register(r'showcase/superviser', SuperviserShowcaseViewSet, basename='showcase_superviser')
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include((router.urls, 'miel'), namespace='miel')),
 
     # Alex
-    path('auth/', include('djoser.urls.jwt')),
-    path('auth/', include('djoser.urls')),
     path('showcase/', UserShowcaseRedirectView.as_view(), name='showcase_user_redirect'),
 
     # Alice
