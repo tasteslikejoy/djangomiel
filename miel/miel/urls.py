@@ -19,12 +19,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-# from users.views import TestApiView
 # from users.views import CreateAdminUserView
 from users.views import CreateAdminUserViewset
-from showcase.views import CardTestApiView, UserShowcaseRedirectView, CandidateCardViewset
+from showcase.views import CardTestApiView, UserShowcaseRedirectView, CandidateCardViewset, TestApiView
 
 from rest_framework.routers import DefaultRouter
+
+app_name = 'miel'
 
 router = DefaultRouter()
 router.register(r'cards', CandidateCardViewset, basename='cards')
@@ -36,7 +37,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
     path('auth/', include('djoser.urls')),
     # path('admin_create/', CreateAdminUserView.as_view(), name='admin_create'),
-    # path('test/', TestApiView.as_view(), name='test_api'),
+    path('test/', TestApiView.as_view(), name='test_api'),  # Тест редиректа
     path('test_cards/', CardTestApiView.as_view(), name='card_test_api'),
     path('showcase/', UserShowcaseRedirectView.as_view(), name='showcase_user_redirect')
 ]
