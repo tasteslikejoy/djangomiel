@@ -50,11 +50,13 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'djoser',
     'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -95,11 +97,18 @@ WSGI_APPLICATION = 'miel.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_LOGIN"),
-        "PASSWORD": os.getenv("DB_PASS", "localhost"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "NAME": 'miel_db',
+        "USER": 'postgres',
+        "PASSWORD": 'postgres',
+        "HOST": 'db',
+        "PORT": 5432,
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": os.getenv("DB_NAME"),
+    #     "USER": os.getenv("DB_LOGIN"),
+    #     "PASSWORD": os.getenv("DB_PASS", "localhost"),
+    #     "HOST": os.getenv("DB_HOST"),
+    #     "PORT": os.getenv("DB_PORT"),
     }
     #  'default': {
     #    'ENGINE': 'django.db.backends.sqlite3',
@@ -203,6 +212,10 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=100),  # TODO Переделать на релизе
     'REFRESH_TOKEN_LIFETIME': timedelta(days=100),
 }
+
+CORS_ALLOWED_ORIGINS = [  # REACT VIA DOCKER
+    'http://localhost:3000'
+]
 
 # # EMAIL
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

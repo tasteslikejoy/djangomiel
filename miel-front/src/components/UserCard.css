@@ -1,0 +1,179 @@
+.user-card {
+    max-width: 363px;
+    background: var(--white-color);
+    border-radius: 20px;
+    border: 1px solid var(--grey-color);
+    padding: 18px;
+}
+
+.user-info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 70px;
+}
+
+.user-header{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.user-about{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-end;
+}
+
+.user-header h2 {
+    font-family: var(--subtitle1-font-family);
+    font-size: var(--subtitle1-font-size);
+    font-weight: var(--subtitle1-font-weight);
+    line-height: var(--subtitle1-line-height);
+    color: var(--black-color);
+}
+
+.resume-link {
+    font-family: var(--menubutton2-font-family);
+    font-size: var(--menubutton2-font-size);
+    font-weight: var(--menubutton2-font-weight);
+    line-height: var(---menubutton2-line-height);
+    color: var(--black-color);
+}
+
+.user-about span{
+    font-family: var(--text3bold-font-family);
+    font-size: var(--text3bold-font-size);
+    font-weight: var(--text3bold-font-weight);
+    line-height: var(--text3bold-line-height);
+    color: var(--black-color);
+    padding: 4px 7px;
+    background-color: var(--pink-color);
+    border-radius: 200px;
+}
+
+.user-header span{
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+}
+
+.tags{
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.tag {
+    font-family: var(--text2-font-family);
+    font-size: var(--text2-font-size);
+    font-weight: var(--text2-font-weight);
+    line-height: var(--text2-line-height);
+    color: var(--black-color);
+    background: transparent;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--grey-color);
+}
+
+.stats {
+    display: flex;
+    gap: 52px;
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+    margin-top: 40px;
+}
+
+.stat-number {
+    font-family: var(--subtitle1-font-family);
+    font-size: var(--subtitle1-font-size);
+    font-weight: var(--subtitle1-font-weight);
+    line-height: var(--subtitle1-line-height);
+    color: var(--mauveine-color);
+}
+
+.courses{
+    margin-top: 34px;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+}
+
+.course-name {
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+}
+
+.progress-bar {
+    background: var(--grey-color);
+    height: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--grey-text-color);
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.favorites-button,
+.invite-button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.favorites-button {
+    background: transparent;
+    border: 1px solid var(--black-text-color);
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+}
+
+.invite-button {
+    background: var(--mauveine-color);
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--white-color);
+}
+
+.footer {
+    font-family: var(--text3-font-family);
+    font-size: var(--text3-font-size);
+    font-weight: var(--text3-font-weight);
+    line-height: var(--text3-line-height);
+    color: var(--black-color);
+    text-align: right;
+}
+
+.show-more {
+    font-family: var(--text2-font-family);
+    font-size: var(--text2-font-size);
+    font-weight: var(--text2-font-weight);
+    line-height: var(--text2-line-height);
+    color: var(--black-color);
+}

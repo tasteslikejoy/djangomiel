@@ -1,0 +1,92 @@
+.filter-sort{
+  display: flex;
+  flex-direction: row;
+  gap: 79px;
+  padding: 32px 0 28px 39px;
+}
+
+.filter-sort button{
+  border: 1px solid var(--silver-color);
+  border-radius: 8px;
+  height: 44px;
+  background: var(--white-color);
+}
+
+.filter-sort button:not(.filter__button_apply, .sort__button_apply){
+  width: auto;
+  padding: 12px 8px;
+  color: var(--black-text-color);
+  font-family: var(--text1-font-family);
+  font-size: var(--text1-font-size);
+  font-weight: var(--text1-font-weight);
+  line-height: var(--text1-line-height);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+
+.filter__arrow{
+  width: 12.85px;
+  height: 7.26px;
+}
+
+.filter__container{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+
+.filter__button_apply img{
+  width: 17px;
+  height: 18px;
+  padding: 13px;
+}
+
+.sort__container{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+
+.sort__button_apply img{
+  width: 20px;
+  height: 20px;
+  padding: 12px;
+}
+
+.sort__button_apply, .filter__button_apply{
+  width: 44px;
+}
+
+.filter__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background-color: var(--white-color);
+  border: 1px solid var(--silver-color);
+  border-radius: 8px;
+  max-height: 300px;
+  margin-top: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+}
+
+.filter-option label{
+  color: var(--black-color);
+  font-family: var(--text1-font-family);
+  font-size: var(--text1-font-size);
+  font-weight: var(--text1-font-weight);
+  line-height: var(--text1-line-height);
+}
+
+.filter-option p{
+
+  border-bottom: 1px solid var(--grey-color);
+}
