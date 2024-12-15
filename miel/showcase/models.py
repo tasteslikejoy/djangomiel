@@ -8,12 +8,13 @@ User = get_user_model() # забираем кастомную модель
 class Quota(models.Model):
     quantity = models.IntegerField(null=True, blank=True, verbose_name='Квота на текущий месяц')
     default = models.IntegerField(null=True, blank=True, verbose_name='Квота по дефолту')
-    used = models.IntegerField(null=True, blank=True, verbose_name='Использованная квота')
-    need = models.IntegerField(null=True, blank=True, verbose_name='Потребность по квоте')
+    used = models.IntegerField(default=0, blank=True, verbose_name='Использованная квота')
+    need = models.IntegerField(default=0, blank=True, verbose_name='Потребность по квоте')
     date = models.DateField(auto_now_add=True, verbose_name='Дата')
+    office = models.ForeignKey('Office', on_delete=models.CASCADE, verbose_name='Офис', related_name='quotas')
 
     class Meta:
-        verbose_name='Квоту'
+        verbose_name = 'Квоту'
         verbose_name_plural = 'Квоты'
 
     def __str__(self):
@@ -26,7 +27,7 @@ class Office(models.Model):
     link_to_admin = models.CharField(max_length=255, null=True, blank=True, verbose_name='Связь с админом')  # tastes_like_joy + t.me/
 
     superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='ФИО руководителя')
-    quota = models.ForeignKey(Quota, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Квота на текущий месяц')
+    # quota = models.ForeignKey(Quota, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Квота на текущий месяц')
 
     class Meta:
         verbose_name = 'Офис'
@@ -74,7 +75,7 @@ class PersonalInfo(models.Model):
     last_name = models.CharField(max_length=50, verbose_name='Фамилия')
     middle_name = models.CharField(max_length=50, verbose_name='Отчество')
     city = models.CharField(max_length=50, verbose_name='Город')
-    gender = models.CharField(choices=Genders, max_length=6, null=True, blank=True, verbose_name='Пол')
+    gender = models.CharField(choices=Genders, max_length=50, null=True, blank=True, verbose_name='Пол')
     date_of_birth = models.DateField(verbose_name='Дата рождения')
 
     class Meta:
@@ -132,13 +133,16 @@ class CandidateCard(models.Model):
         verbose_name_plural = 'Карточка кандидата'
 
     def __str__(self):
-        return f'{self.personal_info.last_name} {self.personal_info.first_name} {self.personal_info.middle_name} ID: {self.id}'
-
+        return (f'{self.personal_info.last_name} '
+                f'{self.personal_info.first_name} '
+                f'{self.personal_info.middle_name} '
+                f'ID: {self.id}')
 
 
 class Invitations(models.Model):
     office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
     status = models.ForeignKey(Status, on_delete=models.CASCADE, verbose_name='Статус')
+
     class Meta:
         verbose_name = 'Приглашение'
         verbose_name_plural = 'Приглашение'
@@ -148,10 +152,9 @@ class Invitations(models.Model):
 
 
 class CandidateCourse(models.Model):
-    progress = models.IntegerField(default=0, verbose_name='Прогресс')
-
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    progress = models.IntegerField(default=0, blank=True, verbose_name='Прогресс')
 
 
 class CandidateSkill(models.Model):

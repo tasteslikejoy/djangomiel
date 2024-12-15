@@ -1,8 +1,101 @@
-from rest_framework.views import APIView
+import django_filters
+from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema, extend_schema_serializer, extend_schema_view
+from rest_framework.decorators import action
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
-from rest_framework import status
-from .serializers import CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
+from rest_framework.views import APIView, status
+from rest_framework import viewsets
+from django.http import HttpResponseRedirect
+
+from rest_framework.pagination import LimitOffsetPagination
+
+from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
 from .models import CandidateCard, Office, Status
+from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
+                          OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer)
+
+User = get_user_model()
+
+
+class CandidateCardViewset(viewsets.ModelViewSet):
+    queryset = CandidateCard.objects.all()
+    permission_classes = [IsSuperviser | IsAdministrator]
+    pagination_class = LimitOffsetPagination
+    serializer_class = CandidateCardSerializer
+
+    def create(self, request, *args, **kwargs):
+        print('******************')
+        print('******************')
+        print(request.user.get_role() != User.UserRoles.administrator)
+        print(User.UserRoles.administrator)
+        print(request.user.get_role())
+        print('******************')
+        print('******************')
+        if request.user.get_role() != User.UserRoles.administrator:
+            return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Method not allowed.'
+            })
+        else:
+            return super().create(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        if request.user.get_role() != User.UserRoles.administrator:
+            return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Method not allowed.'
+            })
+        else:
+            return super().partial_update(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        return Response({
+            'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+            'message': 'Method not allowed.'
+        })
+
+    def destroy(self, request, *args, **kwargs):
+        if request.user.get_role() != User.UserRoles.administrator:
+            return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Method not allowed.'
+            })
+        else:
+            return super().destroy(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):  # Нужна ли детализация?
+        return super().retrieve(request, *args, **kwargs)
+
+    @action(detail=True, methods=['patch'])
+    def set_favorite(self, request, pk=None):  # FIXME переделать логику см. правки
+        card = self.get_object()
+        card.favorite = True
+        card.save()
+        return Response({
+            'status': status.HTTP_200_OK,
+            'message': 'Карточка кандидата'
+        })
+
+
+class UserShowcaseRedirectView(APIView):  # TODO доделать ссылки на редирект
+    """Основное URL для автоматического перехода на нужное представление Витрины Кандидатов """
+    permission_classes = [IsSuperviser | IsAdministrator]
+
+    def get(self, request):
+        user = request.user
+        if user.get_role() == user.UserRoles.superviser:
+            return HttpResponseRedirect(redirect_to='/api/v1/showcase/superviser/')
+        elif user.get_role() == user.UserRoles.administrator:
+            return HttpResponseRedirect(redirect_to='/api/v1/showcase/administrator/')
+        elif user.get_role() == user.UserRoles.staff:
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': f'Вы вошли на страницу для роли {user.UserRoles.staff.label}'
+            })
 
 
 # Получение количества кандидатов, которым принадлежит статус
@@ -43,6 +136,50 @@ class OfficeAllView(APIView):
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
 
 
+# Валераааа
 
 
+class AdminShowcaseViewSet(viewsets.ModelViewSet):
+    queryset = CandidateCard.objects.all().order_by('id')
+    serializer_class = AdminShowcaseSerializer
+    filterset_fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
+                        'comment', 'favorite', 'archived', 'synopsis', 'objects_card', 'clients_card',
+                        'invitation_to_office', 'experience', 'personal_info']
+    http_method_names = ['get']
 
+    def retrieve(self, request, *args, **kwargs):  # FIXME
+        raise MethodNotAllowed('retrieve')
+
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     if user.get_role is user.UserRoles.administrator:
+    #         queryset = CandidateCard.objects.filter(
+    #             id__in=[2, 3]).order_by('created_at', 'favorite')  # FIXME переделать фильтр id на фильтр id статусов
+    #     else:
+    #         queryset = None
+    #     # queryset = CandidateCard.objects.filter(id__in=[2, 3]).order_by('created_at', 'favorite')
+    #     return queryset
+
+
+class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
+    queryset = CandidateCard.objects.all().order_by('id')
+    serializer_class = SuperviserShowcaseSerializer
+    # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['id', 'created_at', 'current_workplace', 'personal_info']
+    http_method_names = ['get']
+
+    def retrieve(self, request, *args, **kwargs):  # FIXME
+        raise MethodNotAllowed('retrieve')
+
+    # def get_queryset(self):
+    #     user = self.request.user
+    #     if user.get_role is user.UserRoles.administrator:
+    #         queryset = CandidateCard.objects.filter(
+    #             id__in=[2, 3]).order_by('created_at', 'favorite')  # FIXME переделать фильтр id на фильтр id статусов
+    #     elif user.get_role is user.UserRoles.superviser:
+    #         queryset = CandidateCard.objects.filter(
+    #             id__in=[2, 3]).order_by('created_at', 'favorite')  # FIXME переделать фильтр id на фильтр id статусов
+    #     else:
+    #         queryset = None
+    #     # queryset = CandidateCard.objects.filter(id__in=[2,3]).order_by('created_at','favorite')
+    #     return queryset
