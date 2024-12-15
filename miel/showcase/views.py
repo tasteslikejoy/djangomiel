@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializer import CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
+from .serializers import CandidateStatusSerializer, CandidateAllSerializer, OfficeAllSerializer
 from .models import CandidateCard, Office, Status
 
 
