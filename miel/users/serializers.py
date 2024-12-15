@@ -16,6 +16,7 @@ class UserRegistrationSerializer(BaseUserRegistrationSerializer):
             'last_name',
             'middle_name',
             'contact_link',
+            'password',
         )
 
 
