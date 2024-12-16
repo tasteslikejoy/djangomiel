@@ -1,4 +1,4 @@
-FROM node:22.11.0
+FROM node:22.12.0
 
 WORKDIR /app
 
@@ -12,4 +12,4 @@ EXPOSE 3000
 
 WORKDIR /app/miel-front
 
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
