@@ -20,7 +20,7 @@ class UserRegistrationSerializer(BaseUserRegistrationSerializer):
         )
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     role = serializers.CharField(source='get_role')
 
     class Meta:

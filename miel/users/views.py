@@ -14,7 +14,7 @@ User = get_user_model()
 
 
 # class CreateAdminUserViewset(UserViewSet):
-@extend_schema(tags=['API пользователи'])
+@extend_schema(tags=['API для работы с пользователями'])
 @extend_schema_view(create=extend_schema(summary='API для создания пользователя-администратора.'))
 class CreateAdminUserViewset(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser | IsSuperAdministrator]

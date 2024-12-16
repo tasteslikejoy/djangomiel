@@ -120,6 +120,18 @@ class QuotaSerializer(serializers.ModelSerializer):
         )
 
 
+class QuotaAutoCreateSerializer(serializers.ModelSerializer):
+    quantity = serializers.IntegerField(required=False, default=10)
+    default = serializers.IntegerField(required=False, default=10)
+
+    class Meta:
+        model = Quota
+        fields = (
+            'quantity',
+            'default',
+        )
+
+
 # Всего офисов в базе
 class OfficeAllSerializer(serializers.ModelSerializer):
     quotas = QuotaSerializer(many=True, required=False)
@@ -148,7 +160,7 @@ class AdminShowcaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = CandidateCard
         fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
-                  'comment', 'favorite', 'archived', 'synopsis', 'objects_card', 'clients_card',
+                  'comment', 'archived', 'synopsis', 'objects_card', 'clients_card',
                   'invitation_to_office', 'experience', 'personal_info',
                   'email', 'phone', 'contact_link',
                   'first_name', 'last_name', 'middle_name', 'city', 'gender', 'date_of_birth']

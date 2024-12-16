@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations
+from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations, \
+    Favorites
 
 
 # Register your models here.
@@ -105,12 +106,12 @@ class StatusAdmin(admin.ModelAdmin):
 class CandidateCardAdmin(admin.ModelAdmin):
     list_display = [
         'id', 'personal_info', 'employment_date',
-        'favorite', 'archived', 'created_at',
+        'archived', 'created_at',
     ]
     list_filter = ['id', 'created_at']
     search_fields = ['personal_info']
     list_display_links = ['personal_info']
-    list_editable = ['favorite', 'archived']
+    list_editable = ['archived']
 
 
 @admin.register(Quota)
@@ -165,3 +166,7 @@ class SkillAdmin(admin.ModelAdmin):
 @admin.register(Invitations)
 class InvitationsAdmin(admin.ModelAdmin):
     list_display = ['office', 'status']
+
+@admin.register(Favorites)
+class FavoritesAdmin(admin.ModelAdmin):
+    list_display = ['candidate_card__personal_info', 'office']
