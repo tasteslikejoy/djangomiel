@@ -18,7 +18,7 @@ from rest_framework.routers import DefaultRouter
 from users.views import CreateAdminUserViewset
 from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
                             CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView,
-                            AdminShowcaseViewSet, SuperviserShowcaseViewSet, OfficeCreateAndGetInfoView)
+                            AdminShowcaseViewSet, SuperviserShowcaseViewSet)
 
 app_name = 'miel'
 
@@ -38,9 +38,9 @@ urlpatterns = [
 
     # Alice
     path('candidate_status_count/', CandidateCountView.as_view(),
-         name='candidate_status_count'),  # сколько кандидатов на статус
+         name='candidate_status_count'),  # ссписок всех статусов и количества кандидатов по ним
     path('office_count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
-    path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов
+    path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
     path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним
-    path('office_create/', OfficeCreateAndGetInfoView.as_view(), name='office_create'),  # создание офиса
+
 ]

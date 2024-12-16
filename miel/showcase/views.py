@@ -143,6 +143,8 @@ class OfficeAllView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
 
+    
+
 
 # Валераааа
 
@@ -191,9 +193,4 @@ class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
     #     # queryset = CandidateCard.objects.filter(id__in=[2,3]).order_by('created_at','favorite')
     #     return queryset
 
-
-@extend_schema(tags=['API создания офисов'])
-class OfficeCreateAndGetInfoView(generics.ListCreateAPIView):
-    queryset = Office.objects.all()
-    serializer_class = OfficeAllSerializer
 
