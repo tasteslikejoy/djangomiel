@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django import forms
+
 from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations
 from django.utils import timezone
 
@@ -101,17 +103,32 @@ class StatusAdmin(admin.ModelAdmin):
 #     )
 #     list_filter = ('favorite', 'archived', 'invitation_to_office')
 
+class CandidateCardAdminForm(forms.ModelForm):
+    status = forms.ModelChoiceField(
+        queryset=Status.objects.all(),
+        required=False,
+        label='Статус'
+    )
+    class Meta:
+        model = CandidateCard
+        fields = '__all__'
 
 @admin.register(CandidateCard)
 class CandidateCardAdmin(admin.ModelAdmin):
+    form = CandidateCardAdminForm
     list_display = [
         'id', 'personal_info', 'employment_date',
-        'archived', 'created_at',
+        'archived', 'created_at', 'get_invitation_status',
     ]
     list_filter = ['id', 'created_at']
     search_fields = ['personal_info']
     list_display_links = ['personal_info']
     list_editable = ['archived']
+
+    def get_invitation_status(self, obj):
+        return obj.invitation_to_office.status.name if obj.invitation_to_office and obj.invitation_to_office.status else 'Нет'
+
+    get_invitation_status.short_description = 'Статус'
 
 
 @admin.register(Quota)

@@ -157,6 +157,7 @@ class OfficeAllView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['История квот'])
 class QuotaHistoryView(APIView):
     def get(self, request, office_id):
         quotas = Quota.objects.filter(office_id=office_id)
@@ -181,6 +182,41 @@ class QuotaHistoryView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=['Получение кандидатов из архива'])
+class ArchiveCandidatesView(generics.ListAPIView):
+    serializer_class = CandidateCardSerializer
+
+    def get_queryset(self):
+        return CandidateCard.objects.filter(
+            invitation_to_office__status__name='Принят в штат'
+        ).exclude(
+            invitation_to_office__status__name='Приглашен'
+        ).exclude(
+            current_workplace__isnull=True
+        )
+
+
+@extend_schema(tags='Получение новых приглашений')
+class InvitedCandidatesView(generics.ListAPIView):
+    serializer_class = CandidateCardSerializer
+
+    def get_queryset(self):
+        return CandidateCard.objects.filter(
+            invitation_to_office__status__name__in=['Приглашен', 'На рассмотрении']
+        )
+
+
+@extend_schema(tags='Получение карточек кандидатов со статусом отклонено')
+class RejectedCandidateView(generics.ListAPIView):
+    serializer_class = CandidateCardSerializer
+
+    def get_queryset(self):
+        return CandidateCard.objects.filter(
+            invitation_to_office__status__name__in=['Не принят', 'Отклонено кандидатом']
+        )
+
 
 
 # Валераааа
