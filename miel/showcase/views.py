@@ -192,6 +192,8 @@ class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
     #     return queryset
 
 
-class OfficeCreateView(generics.CreateAPIView):
+@extend_schema(tags=['API создания офисов'])
+class OfficeCreateAndGetInfoView(generics.ListCreateAPIView):
     queryset = Office.objects.all()
     serializer_class = OfficeAllSerializer
+

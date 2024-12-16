@@ -4,7 +4,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.exceptions import ValidationError
 
 from .models import (CandidateCard, Office, Status, Experience, PersonalInfo, Course, Skill,
-                     CandidateCourse, CandidateSkill, Quota)
+                     CandidateCourse, CandidateSkill, Quota, Invitations)
 
 User = get_user_model()
 
@@ -124,13 +124,29 @@ class QuotaSerializer(serializers.ModelSerializer):
 # Всего офисов в базе
 class OfficeAllSerializer(serializers.ModelSerializer):
     quotas = QuotaSerializer(many=True, required=False)
+    invitation_count = serializers.SerializerMethodField()
+    employed_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Office
-        fields = ['id', 'name', 'location', 'link_to_admin', 'superviser', 'quotas']
+        fields = ['id', 'name', 'location', 'link_to_admin', 'superviser',
+                  'quotas', 'invitation_count', 'employed_count']
 
     def get_queryset_not_zero(self):
         return Office.objects.filter(quotas__need__gt=0).count()
+
+    def get_invitation_count(self, obj):
+        return Invitations.objects.filter(office=obj).count()
+
+    def get_employed_count(self, obj):
+        try:
+            accepted_status = Status.objects.get(name='Принят в штат')
+            return CandidateCard.objects.filter(
+                invitation_to_office__office=obj,
+                invitation_to_office__status__in=[accepted_status.id]
+            ).count()
+        except Status.DoesNotExist:
+            return 0
 
     def create(self, validated_data):
         quotas_data = validated_data.pop('quotas', [])
@@ -194,6 +210,7 @@ class SuperviserShowcaseSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'created_at': {'read_only': True},
         }
+
 
 
 

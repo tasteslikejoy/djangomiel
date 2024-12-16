@@ -10,7 +10,7 @@ class Quota(models.Model):
     default = models.IntegerField(null=True, blank=True, verbose_name='Квота по дефолту')
     used = models.IntegerField(default=0, blank=True, verbose_name='Использованная квота')
     need = models.IntegerField(default=0, blank=True, verbose_name='Потребность по квоте')
-    date = models.DateField(auto_now_add=True, verbose_name='Дата')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата')
     office = models.ForeignKey('Office', on_delete=models.CASCADE, verbose_name='Офис', related_name='quotas')
 
     class Meta:
