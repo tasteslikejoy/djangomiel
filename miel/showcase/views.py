@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView, status
 from rest_framework import viewsets
 from django.http import HttpResponseRedirect
-
+from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 
 from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
@@ -115,7 +115,7 @@ class CandidateCountView(APIView):
 class OfficeCountView(APIView):
     @extend_schema(summary='Отображение количества офисов у которых есть потребность в квоте.')
     def get(self, request):
-        count = Office.objects.filter(quota__need__gt=0).count()
+        count = Office.objects.filter(quotas__need__gt=0).count()
         return Response({'office_count_not_zero': count}, status=status.HTTP_200_OK)  # TODO
 
 
@@ -190,3 +190,8 @@ class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
     #         queryset = None
     #     # queryset = CandidateCard.objects.filter(id__in=[2,3]).order_by('created_at','favorite')
     #     return queryset
+
+
+class OfficeCreateView(generics.CreateAPIView):
+    queryset = Office.objects.all()
+    serializer_class = OfficeAllSerializer

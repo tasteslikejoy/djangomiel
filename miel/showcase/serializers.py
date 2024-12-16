@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
+from rest_framework.exceptions import ValidationError
 
 from .models import (CandidateCard, Office, Status, Experience, PersonalInfo, Course, Skill,
                      CandidateCourse, CandidateSkill, Quota)
@@ -129,7 +130,23 @@ class OfficeAllSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'location', 'link_to_admin', 'superviser', 'quotas']
 
     def get_queryset_not_zero(self):
-        return Office.objects.filter(quota__need__gt=0).count()
+        return Office.objects.filter(quotas__need__gt=0).count()
+
+    def create(self, validated_data):
+        quotas_data = validated_data.pop('quotas', [])
+        office = Office.objects.create(**validated_data)
+
+        if quotas_data:
+            for quota_data in quotas_data:
+                Quota.objects.create(office=office, **quota_data)
+        else:
+            quotas_default = {
+                'quantity': validated_data.get('quantity', 10),
+                'default': validated_data.get('default', 10),
+                'need': validated_data.get('need', 10)
+            }
+            Quota.objects.create(office=office, **quotas_default)
+        return office
 
 
 # Валерааааааа
@@ -177,3 +194,7 @@ class SuperviserShowcaseSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'created_at': {'read_only': True},
         }
+
+
+
+
