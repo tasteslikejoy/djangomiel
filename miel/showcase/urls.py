@@ -45,8 +45,8 @@ urlpatterns = [
     path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним
     path('office_update/<int:office_id>/', OfficeAllView.as_view(), name='office_update'),  # редактирование офиса
     path('quota_history/<int:office_id>/', QuotaHistoryView.as_view(), name='quota_history'),  # история квот
-    path('candidate_archive/', ArchiveCandidatesView.as_view(), name='quota_history'),  # кандидаты в архиве
-    path('candidate_invited/', InvitedCandidatesView.as_view(), name='quota_history'),  # новые приглашения
-    path('candidate_rejected/', RejectedCandidateView.as_view(), name='quota_history'),  # отклоненные
+    path('candidate_archive/', ArchiveCandidatesView.as_view(), name='candidate_archive'),  # кандидаты в архиве
+    path('candidate_invited/', InvitedCandidatesView.as_view(), name='candidate_invited'),  # новые приглашения
+    path('candidate_rejected/', RejectedCandidateView.as_view(), name='candidate_rejected'),  # отклоненные
 
 ]

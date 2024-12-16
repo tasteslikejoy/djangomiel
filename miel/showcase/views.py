@@ -204,7 +204,7 @@ class InvitedCandidatesView(generics.ListAPIView):
 
     def get_queryset(self):
         return CandidateCard.objects.filter(
-            invitation_to_office__status__name__in=['Приглашен', 'На рассмотрении']
+            invitation_to_office__status__name='Приглашен'
         )
 
 
@@ -216,7 +216,6 @@ class RejectedCandidateView(generics.ListAPIView):
         return CandidateCard.objects.filter(
             invitation_to_office__status__name__in=['Не принят', 'Отклонено кандидатом']
         )
-
 
 
 # Валераааа
