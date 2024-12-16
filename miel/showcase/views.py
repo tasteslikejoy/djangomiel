@@ -143,7 +143,18 @@ class OfficeAllView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
 
-    
+    @extend_schema(summary='Редактирование данных офиса.')
+    def put(self, request, office_id):
+        try:
+            office = Office.objects.get(id=office_id)
+        except Office.DoesNotExist:
+            return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = OfficeAllSerializer(office, data=request.data)
+        if serializer.is_valid():
+            update_office = serializer.save()
+            return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Валераааа

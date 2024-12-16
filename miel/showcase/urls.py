@@ -42,5 +42,6 @@ urlpatterns = [
     path('office_count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
     path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
     path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним
+    path('office_update/<int:office_id>/', OfficeAllView.as_view(), name='office_update'),  # редактирование офиса
 
 ]

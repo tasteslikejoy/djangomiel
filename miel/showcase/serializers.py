@@ -149,7 +149,7 @@ class OfficeAllSerializer(serializers.ModelSerializer):
             return 0
 
     def create(self, validated_data):
-        quotas_data = validated_data.pop('quotas', [])
+        quotas_data = validated_data.pop('quotas', None)
         office = Office.objects.create(**validated_data)
 
         if quotas_data:
@@ -164,6 +164,21 @@ class OfficeAllSerializer(serializers.ModelSerializer):
             Quota.objects.create(office=office, **quotas_default)
         return office
 
+    def update(self, instance, validated_data):
+        quotas_data = validated_data.pop('quotas', None)
+
+        instance.name = validated_data.get('name', instance.name)
+        instance.location = validated_data.get('location', instance.location)
+        instance.link_to_admin = validated_data.get('link_to_admin', instance.link_to_admin)
+        instance.superviser = validated_data.get('superviser', instance.superviser)
+
+        if quotas_data is not None:
+            instance.quotas.all().delete()
+            for quota_data in quotas_data:
+                Quota.objects.create(office=instance, **quota_data)
+
+        instance.save()
+        return instance
 
 # Валерааааааа
 
