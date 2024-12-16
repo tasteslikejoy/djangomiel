@@ -10,6 +10,4 @@ COPY . /app
 
 EXPOSE 3000
 
-WORKDIR /app/miel-front
-
-CMD ["npm", "run", "dev"]
+CMD ["npm", "--prefix", "miel-front/", "run", "dev", "--", "--host"]

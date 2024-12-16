@@ -65,7 +65,7 @@ function App() {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:8000/auth/jwt/create', {
+      const response = await axios.post('localhost:3000/auth/jwt/create', {
         username: email,
         password: password,
       });
