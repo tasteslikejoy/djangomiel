@@ -4,7 +4,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser
 
 from .permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
-from .serializers import UserRegistrationSerializer, UserSerializer
+from .serializers import UserRegistrationSerializer
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 User = get_user_model()
 
@@ -13,6 +14,8 @@ User = get_user_model()
 
 
 # class CreateAdminUserViewset(UserViewSet):
+@extend_schema(tags=['API пользователи'])
+@extend_schema_view(create=extend_schema(summary='API для создания пользователя-администратора.'))
 class CreateAdminUserViewset(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser | IsSuperAdministrator]
     serializer_class = UserRegistrationSerializer
