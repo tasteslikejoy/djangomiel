@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations
+from django.utils import timezone
 
 
 # Register your models here.
@@ -105,12 +106,12 @@ class StatusAdmin(admin.ModelAdmin):
 class CandidateCardAdmin(admin.ModelAdmin):
     list_display = [
         'id', 'personal_info', 'employment_date',
-        'favorite', 'archived', 'created_at',
+        'archived', 'created_at',
     ]
     list_filter = ['id', 'created_at']
     search_fields = ['personal_info']
     list_display_links = ['personal_info']
-    list_editable = ['favorite', 'archived']
+    list_editable = ['archived']
 
 
 @admin.register(Quota)
@@ -120,30 +121,53 @@ class QuotaAdmin(admin.ModelAdmin):
     list_display_links = ['office']
 
 
+class QuotaInline(admin.TabularInline):
+    model = Quota
+    extra = 1
+    fields = ['date', 'quantity', 'used', 'default', 'need']
+    readonly_fields = ['date', 'used']
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'date':
+            kwargs['widget'] = admin.widgets.AdminDateWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    def date_display(self, obj):
+        return obj.date.strftime('%d, %b, %Y, %I:%M %p') if obj.date else None
+
+    date_display.short_description = 'Дата'
+
+
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity', 'get_quota_need']
+    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity', 'get_quota_need', 'current_quota', 'current_need']
     list_display_links = ['name']
     list_filter = ['id']
     search_fields = ['name']
+    inlines = [QuotaInline]
+
 
     def get_quota_quantity(self, obj):
-        if obj.quotas.all().exists():
-            quota = obj.quotas.all().last()
-            return quota.quantity
-        else:
-            return None
+        quota = obj.quotas.first()
+        return quota.quantity if quota else None
 
     get_quota_quantity.short_description = 'Квота на текущий месяц'
 
     def get_quota_need(self, obj):
-        if obj.quotas.all().exists():
-            quota = obj.quotas.all().last()
-            return quota.need
-        else:
-            return None
+        quota = obj.quotas.first()
+        return quota.need if quota else None
 
     get_quota_need.short_description = 'Потребность по квоте'
+
+    def current_quota(self, obj):
+        return self.get_quota_quantity(obj)
+
+    current_quota.short_description = 'Квота на текущий месяц'
+
+    def current_need(self, obj):
+        return self.get_quota_need(obj)
+
+    current_need.short_description = 'Потребность по квоте'
 
 
 @admin.register(Course)

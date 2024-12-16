@@ -180,6 +180,13 @@ class OfficeAllSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+class InvitationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invitations
+        fields = ['office', 'status']
+
+
 # Валерааааааа
 
 class AdminShowcaseSerializer(serializers.ModelSerializer):
@@ -196,7 +203,7 @@ class AdminShowcaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = CandidateCard
         fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
-                  'comment', 'favorite', 'archived', 'synopsis', 'objects_card', 'clients_card',
+                  'comment', 'archived', 'synopsis', 'objects_card', 'clients_card',
                   'invitation_to_office', 'experience', 'personal_info',
                   'email', 'phone', 'contact_link',
                   'first_name', 'last_name', 'middle_name', 'city', 'gender', 'date_of_birth']

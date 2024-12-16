@@ -11,9 +11,9 @@ from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 
 from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
-from .models import CandidateCard, Office, Status
+from .models import CandidateCard, Office, Status, Quota, Invitations
 from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
-                          OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer)
+                          OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer, QuotaSerializer, InvitationSerializer)
 
 User = get_user_model()
 
@@ -155,6 +155,32 @@ class OfficeAllView(APIView):
             update_office = serializer.save()
             return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class QuotaHistoryView(APIView):
+    def get(self, request, office_id):
+        quotas = Quota.objects.filter(office_id=office_id)
+        invitations_invited = Invitations.objects.filter(status__name='Приглашен')
+        invitations_hired = Invitations.objects.filter(status__name='Принят в штат')
+
+        quota_data = QuotaSerializer(quotas, many=True).data
+
+        quota_creation_dates = [quota['date'] for quota in quota_data]
+        quota_quantities = [quota['quantity'] for quota in quota_data]
+        quota_used = [quota['used'] for quota in quota_data]
+
+        invitation_data_invited = InvitationSerializer(invitations_invited, many=True).data
+        invitation_data_hired = InvitationSerializer(invitations_hired, many=True).data
+
+        response_data = {
+            'quota_creation_dates': quota_creation_dates,
+            'quota_quantities': quota_quantities,
+            'quota_used': quota_used,
+            'invitations_invited': invitation_data_invited,
+            'invitations_hired': invitation_data_hired
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 # Валераааа

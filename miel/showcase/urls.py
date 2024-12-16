@@ -18,7 +18,7 @@ from rest_framework.routers import DefaultRouter
 from users.views import CreateAdminUserViewset
 from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
                             CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView,
-                            AdminShowcaseViewSet, SuperviserShowcaseViewSet)
+                            AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaHistoryView)
 
 app_name = 'miel'
 
@@ -43,5 +43,6 @@ urlpatterns = [
     path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
     path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним
     path('office_update/<int:office_id>/', OfficeAllView.as_view(), name='office_update'),  # редактирование офиса
+    path('quota_history/<int:office_id>/', QuotaHistoryView.as_view(), name='quota_history'),  # история квот
 
 ]

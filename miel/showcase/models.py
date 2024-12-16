@@ -114,7 +114,6 @@ class CandidateCard(models.Model):
     current_occupation = models.CharField(max_length=255, null=True, blank=True, verbose_name='Должность') # кем сейчас
     employment_date = models.DateField(null=True, blank=True, verbose_name='Дата трудоустройства') # дата трудоустройства (авто по статусу)
     comment = models.CharField(max_length=300, verbose_name='Комментарии')
-    favorite = models.BooleanField(default=False, blank=True, verbose_name='Избранное')
     archived = models.BooleanField(default=False, blank=True, verbose_name='Архив')
     synopsis = models.CharField(max_length=255, null=True, blank=True, verbose_name='Ссылка на резюме') # ссылка на резюме
 
@@ -125,8 +124,8 @@ class CandidateCard(models.Model):
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Опыт')
     personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE, verbose_name='Персональная информация')
 
-    course = models.ManyToManyField('CandidateCourse', blank=True, verbose_name='Курсы')
-    skills = models.ManyToManyField('CandidateSkill', blank=True, verbose_name='Навыки')
+    course = models.ManyToManyField(Course, through='CandidateCourse', blank=True, verbose_name='Курсы')
+    skills = models.ManyToManyField(Skill, through='CandidateSkill', blank=True, verbose_name='Навыки')
 
     class Meta:
         verbose_name = 'Карточку кандидата'
@@ -137,6 +136,16 @@ class CandidateCard(models.Model):
                 f'{self.personal_info.first_name} '
                 f'{self.personal_info.middle_name} '
                 f'ID: {self.id}')
+
+
+class Favorites(models.Model):
+    """Таблица для хранения избранных руководителями офисов кандидатов"""
+    candidate_card = models.ForeignKey(CandidateCard, on_delete=models.CASCADE, verbose_name='Кандидат')
+    office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
+
+    class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
 
 
 class Invitations(models.Model):
