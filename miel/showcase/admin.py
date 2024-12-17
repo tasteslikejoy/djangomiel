@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations, \
-    Favorites
+from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations
 
 
 # Register your models here.
@@ -99,11 +98,21 @@ class StatusAdmin(admin.ModelAdmin):
 #         'personal_info__last_name',
 #         'personal_info__email',
 #     )
-#     list_filter = ('favorite', 'archived')
+#     list_filter = ('favorite', 'archived', 'invitation_to_office')
 
+class CandidateCardAdminForm(forms.ModelForm):
+    status = forms.ModelChoiceField(
+        queryset=Status.objects.all(),
+        required=False,
+        label='Статус'
+    )
+    class Meta:
+        model = CandidateCard
+        fields = '__all__'
 
 @admin.register(CandidateCard)
 class CandidateCardAdmin(admin.ModelAdmin):
+    form = CandidateCardAdminForm
     list_display = [
         'id', 'personal_info', 'employment_date',
         'archived', 'created_at',
@@ -121,30 +130,53 @@ class QuotaAdmin(admin.ModelAdmin):
     list_display_links = ['office']
 
 
+class QuotaInline(admin.TabularInline):
+    model = Quota
+    extra = 1
+    fields = ['date', 'quantity', 'used', 'default', 'need']
+    readonly_fields = ['date', 'used']
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'date':
+            kwargs['widget'] = admin.widgets.AdminDateWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+    def date_display(self, obj):
+        return obj.date.strftime('%d, %b, %Y, %I:%M %p') if obj.date else None
+
+    date_display.short_description = 'Дата'
+
+
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity', 'get_quota_need']
+    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity', 'get_quota_need', 'current_quota', 'current_need']
     list_display_links = ['name']
     list_filter = ['id']
     search_fields = ['name']
+    inlines = [QuotaInline]
+
 
     def get_quota_quantity(self, obj):
-        if obj.quotas.all().exists():
-            quota = obj.quotas.all().last()
-            return quota.quantity
-        else:
-            return None
+        quota = obj.quotas.first()
+        return quota.quantity if quota else None
 
     get_quota_quantity.short_description = 'Квота на текущий месяц'
 
     def get_quota_need(self, obj):
-        if obj.quotas.all().exists():
-            quota = obj.quotas.all().last()
-            return quota.need
-        else:
-            return None
+        quota = obj.quotas.first()
+        return quota.need if quota else None
 
     get_quota_need.short_description = 'Потребность по квоте'
+
+    def current_quota(self, obj):
+        return self.get_quota_quantity(obj)
+
+    current_quota.short_description = 'Квота на текущий месяц'
+
+    def current_need(self, obj):
+        return self.get_quota_need(obj)
+
+    current_need.short_description = 'Потребность по квоте'
 
 
 @admin.register(Course)
@@ -169,5 +201,5 @@ class InvitationsAdmin(admin.ModelAdmin):
 
 
 @admin.register(Favorites)
-class FavoritesAdmin(admin.ModelAdmin):
-    list_display = ['candidate_card__personal_info', 'office']
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ['candidate_card', 'office']

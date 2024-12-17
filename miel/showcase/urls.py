@@ -19,7 +19,10 @@ from users.views import CreateAdminUserViewset
 from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
                             CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView,
                             AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaChangeView,
-                            InvitationsViewset)
+                            InvitationsViewset, AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaHistoryView,
+                            ArchiveCandidatesView, InvitedCandidatesView, RejectedCandidateView,
+                            StatusCreateUpdateDeleteViewSet, SkillCreateUpdateDeleteViewSet,
+                            CourseCreateUpdateDeleteViewSet)
 
 app_name = 'miel'
 
@@ -31,6 +34,9 @@ router.register(r'invitations', InvitationsViewset, basename='invitations')
 # Валераааа
 router.register(r'showcase/administrator', AdminShowcaseViewSet, basename='showcase_administrator')
 router.register(r'showcase/superviser', SuperviserShowcaseViewSet, basename='showcase_superviser')
+router.register(r'statuses', StatusCreateUpdateDeleteViewSet, basename='statuses')  # создание, редактирование, удаление статусов
+router.register(r'skills', SkillCreateUpdateDeleteViewSet, basename='skills')  # создание, редактирование, удаление навыков
+router.register(r'course', CourseCreateUpdateDeleteViewSet, basename='course')  # создание, редактирование, удаление курсов
 
 urlpatterns = [
     path('', include((router.urls, 'miel'), namespace='miel')),
@@ -41,8 +47,13 @@ urlpatterns = [
 
     # Alice
     path('candidate_status_count/', CandidateCountView.as_view(),
-         name='candidate_status_count'),  # сколько кандидатов на статус
+         name='candidate_status_count'),  # ссписок всех статусов и количества кандидатов по ним
     path('office_count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
-    path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов
-    path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов
+    path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
+    path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним
+    path('office_update/<int:office_id>/', OfficeAllView.as_view(), name='office_update'),  # редактирование офиса
+    path('quota_history/<int:office_id>/', QuotaHistoryView.as_view(), name='quota_history'),  # история квот
+    path('candidate_archive/', ArchiveCandidatesView.as_view(), name='candidate_archive'),  # кандидаты в архиве
+    path('candidate_invited/', InvitedCandidatesView.as_view(), name='candidate_invited'),  # новые приглашения
+    path('candidate_rejected/', RejectedCandidateView.as_view(), name='candidate_rejected'),  # отклоненные
 ]

@@ -1,6 +1,5 @@
 import django_filters
 from django.contrib.auth import get_user_model
-from django.db.models import Prefetch
 from drf_spectacular.utils import extend_schema, extend_schema_serializer, extend_schema_view
 from rest_framework.decorators import action
 from rest_framework.exceptions import MethodNotAllowed
@@ -9,14 +8,16 @@ from rest_framework.views import APIView, status
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework import viewsets
 from django.http import HttpResponseRedirect
-
+from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 
 from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
-from .models import CandidateCard, Office, Status, Quota, Favorites, Invitations
+from .models import CandidateCard, Office, Status, Quota, Favorites, Invitations, Skill, Course
 from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
                           OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer,
-                          QuotaAutoCreateSerializer, InvitationToOfficeSerializer)
+                          QuotaAutoCreateSerializer, InvitationToOfficeSerializer,
+                          QuotaSerializer, InvitationSerializer, StatusSerializer, SkillSerializer,
+                          CoursesSerializer)
 
 User = get_user_model()
 
@@ -194,13 +195,12 @@ class OfficeCountView(APIView):
     @extend_schema(summary='Отображение количества офисов у которых есть потребность в квоте. A')
     def get(self, request):
         count = Office.objects.filter(quotas__need__gt=0).count()
-        return Response({'office_count_not_zero': count}, status=status.HTTP_200_OK)
+        return Response({'office_count_not_zero': count}, status=status.HTTP_200_OK)  # TODO
 
 
 @extend_schema(tags=['API вспомогательные'])
 class CandidateAllView(APIView):
     permission_classes = [IsSuperviser | IsAdministrator]
-    serializer_class = CandidateAllSerializer
 
     @extend_schema(summary='Отображение количество карточек кандидатов в базе. A|S')
     def get(self, request):
@@ -225,6 +225,101 @@ class OfficeAllView(APIView):
             'offices': serializer.data
         }
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
+
+    @extend_schema(summary='Редактирование данных офиса.')
+    def put(self, request, office_id):
+        try:
+            office = Office.objects.get(id=office_id)
+        except Office.DoesNotExist:
+            return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = OfficeAllSerializer(office, data=request.data)
+        if serializer.is_valid():
+            update_office = serializer.save()
+            return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=['История квот'])
+class QuotaHistoryView(APIView):
+    def get(self, request, office_id):
+        quotas = Quota.objects.filter(office_id=office_id)
+        invitations_invited = Invitations.objects.filter(status__name='Приглашен')
+        invitations_hired = Invitations.objects.filter(status__name='Принят в штат')
+
+        quota_data = QuotaSerializer(quotas, many=True).data
+
+        quota_creation_dates = [quota['date'] for quota in quota_data]
+        quota_quantities = [quota['quantity'] for quota in quota_data]
+        quota_used = [quota['used'] for quota in quota_data]
+
+        invitation_data_invited = InvitationSerializer(invitations_invited, many=True).data
+        invitation_data_hired = InvitationSerializer(invitations_hired, many=True).data
+
+        response_data = {
+            'quota_creation_dates': quota_creation_dates,
+            'quota_quantities': quota_quantities,
+            'quota_used': quota_used,
+            'invitations_invited': invitation_data_invited,
+            'invitations_hired': invitation_data_hired
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=['Получение кандидатов из архива'])
+class ArchiveCandidatesView(generics.ListAPIView):
+    serializer_class = InvitationSerializer
+
+    def get_queryset(self):
+        return CandidateCard.objects.filter(
+            cards__status__name='Принят в штат'
+        ).exclude(
+            cards__status__name='Приглашен'
+        ).exclude(
+            current_workplace__isnull=True
+        )
+
+
+@extend_schema(tags='Получение новых приглашений')
+class InvitedCandidatesView(generics.ListAPIView):
+    serializer_class = InvitationSerializer
+
+    def get_queryset(self):
+        return Invitations.objects.filter(
+            status__name='Приглашен'
+        )
+
+
+@extend_schema(tags='Получение карточек кандидатов со статусом отклонено')
+class RejectedCandidateView(generics.ListAPIView):
+    serializer_class = CandidateCardSerializer
+
+    def get_queryset(self):
+        return CandidateCard.objects.filter(
+            cards__status__name__in=['Не принят', 'Отклонено кандидатом']
+        )
+
+
+@extend_schema(tags=['Создание, редактирование, удаление статусов'])
+class StatusCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+    permission_classes = [IsAdministrator]
+
+
+@extend_schema(tags=['Создание, редактирование, удаление навыков'])
+class SkillCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = [IsAdministrator]
+
+
+@extend_schema(tags=['Создание, редактирование, удаление курсов'])
+class CourseCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CoursesSerializer
+    permission_classes = [IsAdministrator]
 
 
 @extend_schema(tags=['API витрина кандидатов'])
