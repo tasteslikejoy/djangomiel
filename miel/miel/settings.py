@@ -88,29 +88,26 @@ WSGI_APPLICATION = 'miel.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'miel_db',
-        "USER": 'postgres',
-        "PASSWORD": 'postgres',
-        "HOST": 'db',
-        "PORT": 5432,
-    # "default": {
+    # "default": {                                          # Docker setup
     #     "ENGINE": "django.db.backends.postgresql",
-    #     "NAME": os.getenv("DB_NAME"),
-    #     "USER": os.getenv("DB_LOGIN"),
-    #     "PASSWORD": os.getenv("DB_PASS", "localhost"),
-    #     "HOST": os.getenv("DB_HOST"),
-    #     "PORT": os.getenv("DB_PORT"),
+    #     "NAME": 'miel_db',
+    #     "USER": 'postgres',
+    #     "PASSWORD": 'postgres',
+    #     "HOST": 'db',
+    #     "PORT": 5432,
+    # }
+
+    "default": {                                            # local docker setup
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_LOGIN"),
+        "PASSWORD": os.getenv("DB_PASS", "localhost"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
-    #  'default': {
+
+    #  'default': {                                         # host setup
     #    'ENGINE': 'django.db.backends.sqlite3',
     #    'NAME': BASE_DIR / 'db.sqlite3',
     #  },
@@ -189,7 +186,7 @@ DJOSER = {
     'TOKEN_MODEL': None,  # Setup for JWT
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserRegistrationSerializer',
-        'user': 'users.serializers.UserSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
         'activation': ['rest_framework.permissions.AllowAny'],
