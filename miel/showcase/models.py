@@ -151,7 +151,7 @@ class Favorites(models.Model):
 class Invitations(models.Model):
     candidate_card = models.ForeignKey(CandidateCard, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Карточка кандидата', related_name='cards')
     office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, verbose_name='Статус')
+    status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name='Статус')
 
     class Meta:
         verbose_name = 'Приглашение'
