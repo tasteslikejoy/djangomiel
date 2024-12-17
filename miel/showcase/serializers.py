@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
-from rest_framework.exceptions import ValidationError
 
 from .models import (CandidateCard, Office, Status, Experience, PersonalInfo, Course, Skill,
                      CandidateCourse, CandidateSkill, Quota, Invitations)
@@ -75,7 +74,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
-    invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)
+    # invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)
     experience = ExperienceSerializer(many=True, required=False)
     personal_info = PersonalInfoSerializer()
     course = CourseSerializer(read_only=True, source='course_set', required=False)
