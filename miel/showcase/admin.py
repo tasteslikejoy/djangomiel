@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 
-from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations
+from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations, Favorites
 from django.utils import timezone
 
 
@@ -206,3 +206,8 @@ class SkillAdmin(admin.ModelAdmin):
 @admin.register(Invitations)
 class InvitationsAdmin(admin.ModelAdmin):
     list_display = ['office', 'status']
+
+
+@admin.register(Favorites)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ['candidate_card', 'office']

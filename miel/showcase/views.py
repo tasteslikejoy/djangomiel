@@ -186,25 +186,25 @@ class QuotaHistoryView(APIView):
 
 @extend_schema(tags=['Получение кандидатов из архива'])
 class ArchiveCandidatesView(generics.ListAPIView):
-    serializer_class = CandidateCardSerializer
+    serializer_class = InvitationSerializer
 
     def get_queryset(self):
-        return CandidateCard.objects.filter(
-            invitation_to_office__status__name='Принят в штат'
+        return Invitations.objects.filter(
+            status__name='Принят в штат'
         ).exclude(
-            invitation_to_office__status__name='Приглашен'
+            status__name='Приглашен'
         ).exclude(
-            current_workplace__isnull=True
+            invitations__current_workplace__isnull=True
         )
 
 
 @extend_schema(tags='Получение новых приглашений')
 class InvitedCandidatesView(generics.ListAPIView):
-    serializer_class = CandidateCardSerializer
+    serializer_class = InvitationSerializer
 
     def get_queryset(self):
-        return CandidateCard.objects.filter(
-            invitation_to_office__status__name='Приглашен'
+        return Invitations.objects.filter(
+            status__name='Приглашен'
         )
 
 
@@ -227,7 +227,7 @@ class AdminShowcaseViewSet(viewsets.ModelViewSet):
     queryset = CandidateCard.objects.all().order_by('id')
     serializer_class = AdminShowcaseSerializer
     filterset_fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
-                        'comment', 'favorite', 'archived', 'synopsis', 'objects_card', 'clients_card',
+                        'comment', 'archived', 'synopsis', 'objects_card', 'clients_card',
                         'invitation_to_office', 'experience', 'personal_info']
     http_method_names = ['get']
 

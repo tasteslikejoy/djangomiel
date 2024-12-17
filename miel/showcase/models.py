@@ -120,7 +120,7 @@ class CandidateCard(models.Model):
     objects_card = models.IntegerField(verbose_name='Объекты', null=True, blank=True)
     clients_card = models.IntegerField(verbose_name='Клиенты', null=True, blank=True)
 
-    invitation_to_office = models.ForeignKey('Invitations', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Приглашений в офис')
+    invitation_to_office = models.ForeignKey('Invitations', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Приглашений в офис', related_name='invitations')
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Опыт')
     personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE, verbose_name='Персональная информация')
 
