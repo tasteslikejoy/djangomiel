@@ -118,17 +118,18 @@ class CandidateCardAdmin(admin.ModelAdmin):
     form = CandidateCardAdminForm
     list_display = [
         'id', 'personal_info', 'employment_date',
-        'archived', 'created_at', 'get_invitation_status',
+        'archived', 'created_at',
+        # 'get_invitation_status',
     ]
     list_filter = ['id', 'created_at']
     search_fields = ['personal_info']
     list_display_links = ['personal_info']
     list_editable = ['archived']
 
-    def get_invitation_status(self, obj):
-        return obj.invitation_to_office.status.name if obj.invitation_to_office and obj.invitation_to_office.status else 'Нет'
-
-    get_invitation_status.short_description = 'Статус'
+    # def get_invitation_status(self, obj):
+    #     return obj.invitation_to_office.status.name if obj.invitation_to_office and obj.invitation_to_office.status else 'Нет'
+    #
+    # get_invitation_status.short_description = 'Статус'
 
 
 @admin.register(Quota)

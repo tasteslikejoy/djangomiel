@@ -100,7 +100,7 @@ class CandidateStatusSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'candidate_card_count']
 
     def get_candidate_card_count(self, obj):
-        return CandidateCard.objects.filter(invitation_to_office__status=obj).count()
+        return CandidateCard.objects.filter(cards__status=obj).count()
 
 
 # Всего кандидатов в базе
@@ -142,8 +142,8 @@ class OfficeAllSerializer(serializers.ModelSerializer):
         try:
             accepted_status = Status.objects.get(name='Принят в штат')
             return CandidateCard.objects.filter(
-                invitation_to_office__office=obj,
-                invitation_to_office__status__in=[accepted_status.id]
+                cards__office=obj,
+                cards__status__in=[accepted_status.id]
             ).count()
         except Status.DoesNotExist:
             return 0
@@ -184,7 +184,14 @@ class OfficeAllSerializer(serializers.ModelSerializer):
 class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitations
-        fields = ['office', 'status']
+        fields = ['office', 'status', 'candidate_card']
+
+
+class CoursesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['name']
+
 
 
 # Валерааааааа
@@ -204,7 +211,7 @@ class AdminShowcaseSerializer(serializers.ModelSerializer):
         model = CandidateCard
         fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
                   'comment', 'archived', 'synopsis', 'objects_card', 'clients_card',
-                  'invitation_to_office', 'experience', 'personal_info',
+                  'experience', 'personal_info',
                   'email', 'phone', 'contact_link',
                   'first_name', 'last_name', 'middle_name', 'city', 'gender', 'date_of_birth']
         extra_kwargs = {

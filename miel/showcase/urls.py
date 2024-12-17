@@ -19,7 +19,8 @@ from users.views import CreateAdminUserViewset
 from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
                             CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView,
                             AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaHistoryView,
-                            ArchiveCandidatesView, InvitedCandidatesView, RejectedCandidateView)
+                            ArchiveCandidatesView, InvitedCandidatesView, RejectedCandidateView,
+                            StatusCreateUpdateDeleteViewSet, SkillCreateUpdateDeleteViewSet, CourseCreateUpdateDeleteViewSet)
 
 app_name = 'miel'
 
@@ -30,6 +31,9 @@ router.register(r'admin_create', CreateAdminUserViewset, basename='admin_create'
 # Валераааа
 router.register(r'showcase/administrator', AdminShowcaseViewSet, basename='showcase_administrator')
 router.register(r'showcase/superviser', SuperviserShowcaseViewSet, basename='showcase_superviser')
+router.register(r'statuses', StatusCreateUpdateDeleteViewSet, basename='statuses')  # создание, редактирование, удаление статусов
+router.register(r'skills', SkillCreateUpdateDeleteViewSet, basename='skills')  # создание, редактирование, удаление навыков
+router.register(r'course', CourseCreateUpdateDeleteViewSet, basename='course')  # создание, редактирование, удаление курсов
 
 urlpatterns = [
     path('', include((router.urls, 'miel'), namespace='miel')),

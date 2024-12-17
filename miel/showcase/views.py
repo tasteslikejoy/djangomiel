@@ -11,9 +11,11 @@ from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 
 from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
-from .models import CandidateCard, Office, Status, Quota, Invitations
+from .models import CandidateCard, Office, Status, Quota, Invitations, Skill, Course
 from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
-                          OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer, QuotaSerializer, InvitationSerializer)
+                          OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer,
+                          QuotaSerializer, InvitationSerializer, StatusSerializer, SkillSerializer,
+                          CoursesSerializer)
 
 User = get_user_model()
 
@@ -189,12 +191,12 @@ class ArchiveCandidatesView(generics.ListAPIView):
     serializer_class = InvitationSerializer
 
     def get_queryset(self):
-        return Invitations.objects.filter(
-            status__name='Принят в штат'
+        return CandidateCard.objects.filter(
+            cards__status__name='Принят в штат'
         ).exclude(
-            status__name='Приглашен'
+            cards__status__name='Приглашен'
         ).exclude(
-            invitations__current_workplace__isnull=True
+            current_workplace__isnull=True
         )
 
 
@@ -214,8 +216,29 @@ class RejectedCandidateView(generics.ListAPIView):
 
     def get_queryset(self):
         return CandidateCard.objects.filter(
-            invitation_to_office__status__name__in=['Не принят', 'Отклонено кандидатом']
+            cards__status__name__in=['Не принят', 'Отклонено кандидатом']
         )
+
+
+@extend_schema(tags=['Создание, редактирование, удаление статусов'])
+class StatusCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+    permission_classes = [IsAdministrator]
+
+
+@extend_schema(tags=['Создание, редактирование, удаление навыков'])
+class SkillCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerializer
+    permission_classes = [IsAdministrator]
+
+
+@extend_schema(tags=['Создание, редактирование, удаление курсов'])
+class CourseCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CoursesSerializer
+    permission_classes = [IsAdministrator]
 
 
 # Валераааа
