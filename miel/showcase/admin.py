@@ -167,6 +167,7 @@ class SkillAdmin(admin.ModelAdmin):
 class InvitationsAdmin(admin.ModelAdmin):
     list_display = ['office', 'status']
 
+
 @admin.register(Favorites)
 class FavoritesAdmin(admin.ModelAdmin):
     list_display = ['candidate_card__personal_info', 'office']

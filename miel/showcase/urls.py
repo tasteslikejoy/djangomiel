@@ -18,13 +18,15 @@ from rest_framework.routers import DefaultRouter
 from users.views import CreateAdminUserViewset
 from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
                             CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView,
-                            AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaChangeView)
+                            AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaChangeView,
+                            InvitationsViewset)
 
 app_name = 'miel'
 
 router = DefaultRouter()
 router.register(r'cards', CandidateCardViewset, basename='cards')
 router.register(r'admin_create', CreateAdminUserViewset, basename='admin_create')
+router.register(r'invitations', InvitationsViewset, basename='invitations')
 
 # Валераааа
 router.register(r'showcase/administrator', AdminShowcaseViewSet, basename='showcase_administrator')
