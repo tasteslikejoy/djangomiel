@@ -196,7 +196,7 @@ DJOSER = {
         'username_reset': ['djoser.permissions.CurrentUserOrAdmin'],  #
         'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
-        'user_create': ['rest_framework.permissions.IsAdminUser'],  # TODO переделать на пермишн Администратора
+        'user_create': ['users.permissions.IsAdministrator'],  # TODO переделать на пермишн Администратора
         'user_delete': ['rest_framework.permissions.IsAdminUser'],  #
         'user': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_list': ['rest_framework.permissions.IsAdminUser'],  #
