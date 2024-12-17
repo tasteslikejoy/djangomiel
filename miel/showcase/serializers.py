@@ -9,18 +9,18 @@ from .models import (CandidateCard, Office, Status, Experience, PersonalInfo, Co
 User = get_user_model()
 
 
-class StatusSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Status
-        fields = ('name',)
-
-
 class InvitationToOfficeSerializer(WritableNestedModelSerializer):
     status = StatusSerializer(required=False)
 
     class Meta:
-        model = Invitations
+        model = Office
         fields = ('status',)
+
+
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = ('name',)
 
 
 class ExperienceSerializer(serializers.ModelSerializer):
@@ -77,6 +77,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
+    # invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)
     experience = ExperienceSerializer(many=True, required=False)
     personal_info = PersonalInfoSerializer()
     course = CourseSerializer(read_only=True, source='course_set', required=False)

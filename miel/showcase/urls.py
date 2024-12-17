@@ -33,6 +33,8 @@ router.register(r'invitations', InvitationsViewset, basename='invitations')
 # Валераааа
 router.register(r'showcase/administrator', AdminShowcaseViewSet, basename='showcase_administrator')
 router.register(r'showcase/superviser', SuperviserShowcaseViewSet, basename='showcase_superviser')
+
+# Алиса
 router.register(r'statuses', StatusCreateUpdateDeleteViewSet, basename='statuses')  # создание, редактирование, удаление статусов
 router.register(r'skills', SkillCreateUpdateDeleteViewSet, basename='skills')  # создание, редактирование, удаление навыков
 router.register(r'course', CourseCreateUpdateDeleteViewSet, basename='course')  # создание, редактирование, удаление курсов
