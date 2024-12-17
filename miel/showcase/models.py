@@ -125,10 +125,6 @@ class CandidateCard(models.Model):
     objects_card = models.IntegerField(verbose_name='Объекты', null=True, blank=True)
     clients_card = models.IntegerField(verbose_name='Клиенты', null=True, blank=True)
 
-    invitations = models.ForeignKey('Invitations', null=True, blank=True,
-                                    on_delete=models.SET_NULL,
-                                    related_name='cards',
-                                    verbose_name='Приглашений в офис')
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Опыт')
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE, verbose_name='Персональная информация')
 
@@ -158,9 +154,9 @@ class Favorites(models.Model):
 
 class Invitations(models.Model):
     office = models.ForeignKey(Office, on_delete=models.CASCADE, blank=True, verbose_name='Офис')
-    status = models.ForeignKey(Status, on_delete=models.CASCADE,
-                               default=Status.objects.filter(name='Приглашен').first(),
-                               verbose_name='Статус')
+    status = models.ForeignKey(Status, on_delete=models.CASCADE, blank=True, verbose_name='Статус')
+    candidate_card = models.ForeignKey(CandidateCard, on_delete=models.CASCADE, related_name='cards',
+                                       verbose_name='Карточка кандидата')
 
     class Meta:
         verbose_name = 'Приглашение'

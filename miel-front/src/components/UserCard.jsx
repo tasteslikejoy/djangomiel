@@ -27,16 +27,16 @@ class UserCard extends Component {
         creationDate: '20.05.2024',
         invitations: 4,
         courses: [
-          { name: 'Базовый-стажер', progress: 50 },
-          { name: 'Документооборот', progress: 100 },
-          { name: 'Юриспруденция', progress: 70 },
-          { name: 'Менеджмент', progress: 60 },
-          { name: 'Финансовый учет', progress: 80 },
-          { name: 'Проектирование', progress: 40 },
-          { name: 'Кадровое дело', progress: 90 },
-          { name: 'Экономика', progress: 75 },
-          { name: 'Маркетинг', progress: 85 },
-        ],
+          { name: 'Базовый-стажер', progress: 100, startDate: '01.01.2024', endDate: '31.12.2024', points: 80 },
+          { name: 'Документооборот', progress: 100, startDate: '01.01.2023', endDate: '31.12.2023', points: 100 },
+          { name: 'Юриспруденция', progress: 70, startDate: '01.03.2024', endDate: '30.09.2024', points: null },
+          { name: 'Менеджмент', progress: 100, startDate: '01.02.2024', endDate: '31.08.2024', points: 95 },
+          { name: 'Финансовый учет', progress: 80, startDate: '01.04.2024', endDate: '31.10.2024', points: null },
+          { name: 'Проектирование', progress: 40, startDate: '01.06.2024', endDate: '31.12.2024', points: null },
+          { name: 'Кадровое дело', progress: 90, startDate: '01.07.2024', endDate: '31.12.2024', points: null },
+          { name: 'Экономика', progress: 75, startDate: '01.09.2024', endDate: '28.02.2025', points: null },
+          { name: 'Маркетинг', progress: 85, startDate: '01.10.2024', endDate: '31.12.2025', points: null },
+        ]
       },
     };
   }
@@ -73,7 +73,7 @@ class UserCard extends Component {
         <div className="user-info">
           <div className="user-header">
             <h2><strong>{name}</strong></h2>
-            <span>{age} года г. {city}</span>
+            <p>{age} года <span>г. {city}</span></p>
           </div>
           <div className="user-about">
             <span>{invitations} приглашения</span>
@@ -95,12 +95,26 @@ class UserCard extends Component {
         <div className="courses">
           {courses.slice(0, visibleCount).map((course, index) => (
             <div key={index} className="course">
-              <span className="course-name">курс "{course.name}"</span>
+              <div className="course-header">
+                <span className="course-name">
+                  курс "{course.name}"
+                </span>
+                {course.progress === 100 && course.points !== null && (
+                  <div className="course-total">
+                    <img className="course-medal" src="../src/assets/medal.svg" alt="Медаль"/>
+                    <span className="course-points">{course.points}/100<br />баллов</span>
+                  </div>
+                )}
+              </div>
               <div className="progress-bar">
                 <div
                   className="progress-fill"
                   style={{ width: `${course.progress}%` }}
                 ></div>
+              </div>
+              <div className="course-dates">
+                <p>{course.startDate} г.</p>
+                <p>{course.endDate} г.</p>
               </div>
             </div>
           ))}
@@ -108,28 +122,31 @@ class UserCard extends Component {
 
         <div className="show-more">
           {!allCoursesVisible ? (
-            <button onClick={this.handleShowMore} className="show-more-button">
+            <button onClick={this.handleShowMore} className="show-more-button open">
               Еще 3 курса 
               <img className="filter__arrow" src="../src/assets/arrow.svg" alt="Раскрыть список"/>
             </button>
           ) : (
-            <button onClick={this.handleHideCourses} className="show-more-button">
+            <button onClick={this.handleHideCourses} className="show-more-button close">
               Скрыть курсы
-              <img className="filter__arrow" src="../src/assets/arrow.svg" alt="Раскрыть список"/>
+              <img className="filter__arrow" src="../src/assets/arrow.svg" alt="Скрыть список"/>
             </button>
           )}
         </div>
 
         <div className="buttons">
-          <button className="favorites-button">В избранное</button>
+          <button className="favorites-button"><img src="../src/assets/heart.svg" alt="В избранное"/>
+          {/* <button className="favorites-button"><img src="../src/assets/click.gif" alt="В избранное" width='24px' height='24px'/> */}
+          В Избранное</button>
           <button className="invite-button">Пригласить</button>
         </div>
 
-        <div className="footer">Создан {creationDate}</div>
+        <div className="footer">создан {creationDate}</div>
       </div>
     );
   }
 }
 
 export default UserCard;
+
 

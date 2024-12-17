@@ -76,7 +76,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
-    invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)  # TODO
+    # invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)  # TODO
     experience = ExperienceSerializer(many=True, required=False)
     personal_info = PersonalInfoSerializer()
     course = CourseSerializer(read_only=True, source='course_set', required=False)

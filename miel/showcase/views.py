@@ -290,26 +290,30 @@ class InvitationsViewset(viewsets.ModelViewSet):
     permission_classes = [IsSuperviser | IsAdministrator]
 
     @extend_schema(summary='Создание приглашения кандидата в офис. S')
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            office = Office.objects.filter(superviser=request.user)
-            if office.exists():
-                office = office.first()
-                card = CandidateCard.objects.filter(invitations__office=office)
-                if card.exists():
-                    return Response({
-                        'status': status.HTTP_304_NOT_MODIFIED,
-                        'message': 'Приглашение в офис для этого кандидата уже создано.'
-                    })
-                else:
-                    invitation = Invitations.objects.create(
-                        office=office
-                    )
-                    return Response({
-                        'status': status.HTTP_201_CREATED,
-                        'message': f'Приглашение создано {invitation.id}'
-                    })
+    @action(detail=True, methods=['post'])
+    def create_invitation(self, request, pk=None, *args, **kwargs):
+        office = Office.objects.filter(superviser=request.user)
+        if office.exists():
+            office = office.first()
+            card = CandidateCard.objects.filter(pk=pk)
+            if card.exists():
+                card = card.first()
+
+            invitation = Invitations.objects.filter(office=office, candidate_card=card)
+            if invitation.exists():
+                return Response({
+                    'status': status.HTTP_304_NOT_MODIFIED,
+                    'message': 'Приглашение в офис для этого кандидата уже создано.'
+                })
+            else:
+                # invitation = Invitations.objects.create(
+                #     office=office,
+                #     status=Status.objects.get(name='Приглашен')
+                # )
+                return Response({
+                    'status': status.HTTP_201_CREATED,
+                    'message': f'Приглашение создано'  #  {invitation.id}
+                })
         else:
             return Response({
                 'message': f'У авторизированного пользователя нет офиса для приглашения.'

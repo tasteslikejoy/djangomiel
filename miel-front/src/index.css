@@ -122,4 +122,9 @@
   --buttontext-font-size: 22px;
   --buttontext-font-weight: 700;
   --buttontext-line-height: 28px;
+
+  --score-font-family: PT Sans;
+  --score-font-size: 10px;
+  --score-font-weight: 700;
+  --score-line-height: 12px;
 }

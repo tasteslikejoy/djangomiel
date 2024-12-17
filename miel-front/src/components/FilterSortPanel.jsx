@@ -7,67 +7,73 @@ class FilterDropdown extends Component {
     this.state = {
       isOpen: false,
     };
+    this.dropdownRef = React.createRef();
   }
 
   toggleDropdown = () => {
-  this.setState((prevState) => {
-    const isOpen = !prevState.isOpen;
-    if (isOpen) {
-      document.addEventListener("click", this.handleClickOutside);
-    } else {
+    this.setState((prevState) => {
+      const isOpen = !prevState.isOpen;
+      if (isOpen) {
+        document.addEventListener("click", this.handleClickOutside);
+      } else {
+        document.removeEventListener("click", this.handleClickOutside);
+      }
+      return { isOpen };
+    });
+  };
+
+  handleClickOutside = (event) => {
+    if (this.dropdownRef.current && !this.dropdownRef.current.contains(event.target)) {
+      this.setState({ isOpen: false });
       document.removeEventListener("click", this.handleClickOutside);
     }
-    return { isOpen };
-  });
-};
+  };
 
-handleClickOutside = (event) => {
-  if (this.dropdownRef && !this.dropdownRef.contains(event.target)) {
-    this.setState({ isOpen: false });
+  render() {
+    const { label, options, selectedOptions, isCheckbox, onChange } = this.props;
+    const { isOpen } = this.state;
+
+    return (
+      <div
+        ref={this.dropdownRef}
+        style={{ position: "relative", display: "inline-block" }}
+      >
+        <button className="filter__button" onClick={this.toggleDropdown}>
+          {label}
+          <img
+            className={`filter__arrow ${isOpen ? "open" : "closed"}`}
+            src="../src/assets/arrow.svg"
+            alt="Раскрыть список"
+          />
+        </button>
+        {isOpen && (
+          <div className="filter__dropdown open">
+            {options.map((option) => (
+              <div key={option} className="filter-option">
+                {isCheckbox ? (
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selectedOptions.includes(option)}
+                      onChange={() => {
+                        const updatedOptions = selectedOptions.includes(option)
+                          ? selectedOptions.filter((item) => item !== option)
+                          : [...selectedOptions, option];
+                        onChange(updatedOptions);
+                      }}
+                    />
+                    {option}
+                  </label>
+                ) : (
+                  <p onClick={() => onChange(option)}>{option}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   }
-};
-
-render() {
-  const { label, options, selectedOptions, isCheckbox } = this.props;
-  const { isOpen } = this.state;
-
-  return (
-    <div ref={(ref) => { this.dropdownRef = ref; }} style={{ position: "relative", display: "inline-block" }}>
-      <button className="filter__button" onClick={this.toggleDropdown}>
-        {label} <img className="filter__arrow" src="../src/assets/arrow.svg" alt="Раскрыть список"/>
-      </button>
-      {isOpen && (
-        <div className="filter__dropdown open">
-          {options.map((option) => (
-            <div key={option} className="filter-option">
-              {isCheckbox ? (
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={selectedOptions.includes(option)}
-                    onChange={() =>
-                      selectedOptions.includes(option)
-                        ? onChange(selectedOptions.filter((item) => item !== option))
-                        : onChange([...selectedOptions, option])
-                    }
-                  />
-                  {option}
-                </label>
-              ) : (
-                <p
-                  onClick={() => this.handleOptionClick(option)}
-                >
-                  {option}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 }
 
 class FilterComponent extends Component {
@@ -77,52 +83,50 @@ class FilterComponent extends Component {
       selectedCourses,
       selectedSkills,
       selectedCities,
-      onFilterChange
+      onFilterChange,
     } = this.props;
 
     return (
       <div className="filter__container">
-        <button className="filter__button_apply" onClick={this.handleApplyFilters}>
+        <button
+          className="filter__button_apply"
+          onClick={this.props.onApplyFilters}
+        >
           <img src="../src/assets/filter.svg" alt="Применить фильтры" />
         </button>
         <FilterDropdown
-          className="filter__item"
           label="Возраст кандидата"
           options={["20-25 лет", "25-30 лет", "35-40 лет", "более 40 лет"]}
           selectedOptions={selectedAge}
           onChange={(options) => onFilterChange("selectedAge", options)}
-          isCheckbox={false}
+          isCheckbox={true}
         />
         <FilterDropdown
-          className="filter__item"
           label="Курсы"
           options={["Базовый", "Ипотека", "Юриспруденция", "Налогообложение"]}
           selectedOptions={selectedCourses}
           onChange={(options) => onFilterChange("selectedCourses", options)}
-          isCheckbox={false}
+          isCheckbox={true}
         />
         <FilterDropdown
-          className="filter__item"
           label="Навыки"
           options={["Личный авто", "Коммуникабельность", "Эмоциональная стабильность"]}
           selectedOptions={selectedSkills}
           onChange={(options) => onFilterChange("selectedSkills", options)}
-          isCheckbox={false}
+          isCheckbox={true}
         />
         <FilterDropdown
-          className="filter__item"
           label="Город"
           options={["Барнаул", "Екатеринбург", "Москва", "Нижний Тагил"]}
           selectedOptions={selectedCities}
           onChange={(options) => onFilterChange("selectedCities", options)}
-          isCheckbox={false}
+          isCheckbox={true}
         />
       </div>
     );
   }
 }
 
-// Компонент для сортировки
 class SortComponent extends Component {
   render() {
     const { selectedDate, selectedPopularity, onSortChange } = this.props;
@@ -130,7 +134,6 @@ class SortComponent extends Component {
     return (
       <div className="sort__container">
         <FilterDropdown
-          className="sort__item"
           label="По дате"
           options={["Сначала новые", "Сначала старые"]}
           selectedOptions={selectedDate}
@@ -138,14 +141,13 @@ class SortComponent extends Component {
           isCheckbox={false}
         />
         <FilterDropdown
-          className="sort__item"
           label="По популярности"
           options={["Больше приглашений", "Меньше приглашений"]}
           selectedOptions={selectedPopularity}
           onChange={(option) => onSortChange("selectedPopularity", option)}
           isCheckbox={false}
         />
-        <button className="sort__button_apply" onClick={this.handleSort}>
+        <button className="sort__button_apply" onClick={this.props.onApplySort}>
           <img src="../src/assets/sort.svg" alt="Применить сортировку" />
         </button>
       </div>
@@ -178,8 +180,12 @@ class FilterSortPanel extends Component {
     console.log("Примененные фильтры:", this.state);
   };
 
-  handleSort = () => {
-    console.log("Сортировка по:", this.state.selectedDate, this.state.selectedPopularity);
+  handleApplySort = () => {
+    console.log(
+      "Сортировка по:",
+      this.state.selectedDate,
+      this.state.selectedPopularity
+    );
   };
 
   render() {
@@ -194,27 +200,24 @@ class FilterSortPanel extends Component {
 
     return (
       <div className="filter-sort">
-        
-        {/* Фильтры */}
         <FilterComponent
           selectedAge={selectedAge}
           selectedCourses={selectedCourses}
           selectedSkills={selectedSkills}
           selectedCities={selectedCities}
           onFilterChange={this.handleFilterChange}
+          onApplyFilters={this.handleApplyFilters}
         />
-        
-        {/* Сортировка */}
         <SortComponent
           selectedDate={selectedDate}
           selectedPopularity={selectedPopularity}
           onSortChange={this.handleSortChange}
+          onApplySort={this.handleApplySort}
         />
-        
-        
       </div>
     );
   }
 }
 
 export default FilterSortPanel;
+

@@ -10,7 +10,7 @@
     font-weight: var(--subtitle1-font-weight);
     line-height: var(--subtitle1-line-height);
     color: var(--black-color);
-    margin-top: -15px;
+    margin-top: 25px;
 }
 
 .login__form {

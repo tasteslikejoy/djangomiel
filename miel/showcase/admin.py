@@ -99,7 +99,7 @@ class StatusAdmin(admin.ModelAdmin):
 #         'personal_info__last_name',
 #         'personal_info__email',
 #     )
-#     list_filter = ('favorite', 'archived', 'invitation_to_office')
+#     list_filter = ('favorite', 'archived')
 
 
 @admin.register(CandidateCard)

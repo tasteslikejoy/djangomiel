@@ -11,6 +11,9 @@ class Sidebar extends Component {
 
   handleItemClick = (item) => {
     this.setState({ activeItem: item });
+    if (this.props.onMenuClick) {
+      this.props.onMenuClick(item);
+    }
   };
 
   render() {

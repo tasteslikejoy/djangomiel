@@ -1,114 +1,45 @@
-// import {useState, useEffect} from 'react'
-// import axios from 'axios'
-// import Header from './components/Header'
-// import Sidebar from './components/Sidebar'
-
-// import FilterSortPanel from './components/FilterSortPanel'
-// import Login from './components/Login'
-// import './App.css'
-// import React from 'react'
-// import UserCard from './components/UserCard'
-
-
-// function App() {
-//   return (
-//     <div className="app-container">
-//       <Header />
-//       <div className="main-content">
-//         <Sidebar />
-//         <section className="content">
-//           <FilterSortPanel />
-//           <div className="cards">
-//             <UserCard />
-//             <UserCard />
-//             <UserCard />
-//             <UserCard />
-//             <UserCard />
-//             <UserCard />
-//             <UserCard />
-//             <UserCard />
-//             <UserCard />
-//           </div>
-//         </section>
-        
-//       </div>
-//       {/* <Login /> */}
-//     </div>
-//   );
-// }
-
-// export default App
-
-
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import FilterSortPanel from './components/FilterSortPanel';
+import React, { Component } from 'react';
 import Login from './components/Login';
+import Dashboard from './components/Dashboard';
 import './App.css';
-import React from 'react';
-import UserCard from './components/UserCard';
 
+class App extends Component {
+  state = {
+    isLoggedIn: false,
+    token: null,
+    userData: null,
+  };
+  
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      setIsLoggedIn(true);
-      //загрузка данных пользователя
-    }
-  }, []);
-
-  const handleLogin = async (email, password) => {
-    try {
-      const response = await axios.post('localhost:3000/auth/jwt/create', {
-        username: email,
-        password: password,
-      });
-      if (response.status === 201) {
-        localStorage.setItem('accessToken', response.data.access);
-        localStorage.setItem('refreshToken', response.data.refresh);
-        setIsLoggedIn(true);
-        setUserData({ name: response.data.name, email });
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-    }
+  handleLogin = (token, userData) => {
+    this.setState({
+      isLoggedIn: true,
+      token,
+      userData,
+    });
   };
 
-  const handleLogout = () => {
+  handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    setIsLoggedIn(false);
-    setUserData(null);
+    this.setState({ isLoggedIn: false, token: null, userData: null });
   };
+  
+  render() {
+    const { isLoggedIn, userData } = this.state;
 
-  return (
-    <div className="app-container">
-      {isLoggedIn ? (
-        <>
-          <Header userData={userData} onLogout={handleLogout} />
-          <div className="main-content">
-            <Sidebar />
-            <section className="content">
-              <FilterSortPanel />
-              <div className="cards">
-                {Array.from({ length: 9 }).map((_, index) => (
-                  <UserCard key={index} />
-                ))}
-              </div>
-            </section>
-          </div>
-        </>
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
-  );
+    return (
+      <div>
+        {isLoggedIn ? (
+          <Dashboard onLogout={this.handleLogout} userData={userData} />
+        ) : (
+          <div className="login-container">
+            <Login onLogin={this.handleLogin} />
+          </div>  
+        )}
+      </div>
+    );
+  }
 }
 
 export default App;
