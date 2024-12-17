@@ -156,6 +156,47 @@ class CandidateCardViewset(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @extend_schema(summary='Создание приглашения кандидата в офис. S')
+    @action(detail=True, methods=['post'])
+    def create_invitation(self, request, pk=None, *args, **kwargs):
+        if request.user.get_role() != User.UserRoles.superviser:
+            return Response({
+                'status': status.HTTP_405_METHOD_NOT_ALLOWED,
+                'message': 'Метод только для действующих руководителей офисов.'
+            })
+        office = Office.objects.filter(superviser=request.user)
+        if office.exists():
+            office = office.first()
+
+            try:
+                card = CandidateCard.objects.get(pk=pk)
+            except ModuleNotFoundError:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Карточка кандидата не существует или ошибка в коде.'
+                })
+
+            invitation = Invitations.objects.filter(office=office, candidate_card=card)
+            if invitation.exists():
+                return Response({
+                    'status': status.HTTP_304_NOT_MODIFIED,
+                    'message': 'Приглашение в офис для этого кандидата уже создано.'
+                })
+
+            invitation = Invitations.objects.create(
+                office=office,
+                status=Status.objects.get(name='Приглашен'),
+                candidate_card=card
+            )
+            return Response({
+                'status': status.HTTP_201_CREATED,
+                'message': f'Приглашение создано {invitation.id}'
+            })
+        else:
+            return Response({
+                'message': f'У авторизированного пользователя нет офиса для приглашения.'
+            })
+
 
 @extend_schema(tags=['API витрина кандидатов'])
 class UserShowcaseRedirectView(APIView):
@@ -216,7 +257,7 @@ class OfficeAllView(APIView):
     permission_classes = [IsAdministrator]
 
     @extend_schema(summary='Отображение количества и данных офисов. A')
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         offices = Office.objects.all()
         office_count = offices.count()
         serializer = OfficeAllSerializer(offices, many=True)
@@ -240,8 +281,11 @@ class OfficeAllView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(tags=['История квот'])
+@extend_schema(tags=['API вспомогательные'])
 class QuotaHistoryView(APIView):
+    permission_classes = [IsAdministrator | IsSuperviser]
+
+    @extend_schema(summary='История квот. A|S')
     def get(self, request, office_id):
         quotas = Quota.objects.filter(office_id=office_id)
         invitations_invited = Invitations.objects.filter(status__name='Приглашен')
@@ -267,9 +311,13 @@ class QuotaHistoryView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-@extend_schema(tags=['Получение кандидатов из архива'])
+@extend_schema(tags=['API вспомогательные'])
+@extend_schema_view(retrieve=extend_schema(exclude=True),
+                    get=extend_schema(summary='Получение кандидатов из архива. A'))
 class ArchiveCandidatesView(generics.ListAPIView):
+    permission_classes = [IsAdministrator]
     serializer_class = InvitationSerializer
+    http_method_names = ['get']
 
     def get_queryset(self):
         return CandidateCard.objects.filter(
@@ -281,9 +329,13 @@ class ArchiveCandidatesView(generics.ListAPIView):
         )
 
 
-@extend_schema(tags='Получение новых приглашений')
+@extend_schema(tags=['API вспомогательные'])
+@extend_schema_view(retrieve=extend_schema(exclude=True),
+                    get=extend_schema(summary='Получение новых приглашений. A'))
 class InvitedCandidatesView(generics.ListAPIView):
+    permission_classes = [IsAdministrator]
     serializer_class = InvitationSerializer
+    http_method_names = ['get']
 
     def get_queryset(self):
         return Invitations.objects.filter(
@@ -291,9 +343,13 @@ class InvitedCandidatesView(generics.ListAPIView):
         )
 
 
-@extend_schema(tags='Получение карточек кандидатов со статусом отклонено')
+@extend_schema(tags=['API вспомогательные'])
+@extend_schema_view(retrieve=extend_schema(exclude=True),
+                    get=extend_schema(summary='Получение карточек кандидатов со статусом отклонено. A'))
 class RejectedCandidateView(generics.ListAPIView):
+    permission_classes = [IsAdministrator]
     serializer_class = CandidateCardSerializer
+    http_method_names = ['get']
 
     def get_queryset(self):
         return CandidateCard.objects.filter(
@@ -301,21 +357,21 @@ class RejectedCandidateView(generics.ListAPIView):
         )
 
 
-@extend_schema(tags=['Создание, редактирование, удаление статусов'])
+@extend_schema(tags=['API создание, редактирование, удаление статусов'])
 class StatusCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
     permission_classes = [IsAdministrator]
 
 
-@extend_schema(tags=['Создание, редактирование, удаление навыков'])
+@extend_schema(tags=['API создание, редактирование, удаление навыков'])
 class SkillCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
     queryset = Skill.objects.all()
     serializer_class = SkillSerializer
     permission_classes = [IsAdministrator]
 
 
-@extend_schema(tags=['Создание, редактирование, удаление курсов'])
+@extend_schema(tags=['API создание, редактирование, удаление курсов'])
 class CourseCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CoursesSerializer
@@ -332,7 +388,7 @@ class AdminShowcaseViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     filterset_fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
                         'comment', 'archived', 'synopsis', 'objects_card', 'clients_card',
-                        'invitation_to_office', 'experience', 'personal_info']
+                        'experience', 'personal_info']
     http_method_names = ['get']
 
 
@@ -379,38 +435,59 @@ class QuotaChangeView(APIView):
 
 
 @extend_schema(tags=['API для работы с карточками кандидатов'])
+@extend_schema_view(partial_update=extend_schema(exclude=True))
 class InvitationsViewset(viewsets.ModelViewSet):
     queryset = Invitations.objects.all()
     serializer_class = InvitationToOfficeSerializer
-    permission_classes = [IsSuperviser | IsAdministrator]
+    permission_classes = [IsAdministrator]
+    http_method_names = ['patch']
 
-    @extend_schema(summary='Создание приглашения кандидата в офис. S')
-    @action(detail=True, methods=['post'])
-    def create_invitation(self, request, pk=None, *args, **kwargs):
-        office = Office.objects.filter(superviser=request.user)
-        if office.exists():
-            office = office.first()
-            card = CandidateCard.objects.filter(pk=pk)
-            if card.exists():
-                card = card.first()
+    @extend_schema(summary='Редактирование приглашения кандидата в офис. A')
+    @action(detail=True, methods=['patch'])
+    def patch(self, request, pk=None, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            print('*-*-*-*-*-*-*-*-*-*')
+            print('*-*-*-*-*-*-*-*-*-*')
+            print(serializer.validated_data)
+            print('*-*-*-*-*-*-*-*-*-*')
+            print('*-*-*-*-*-*-*-*-*-*')
+            try:
+                status_obj = serializer.validated_data['status']
+                status_name = Status.objects.get(name=status_obj['name'])
+            except ModuleNotFoundError:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Такого статуса нет в базе данных'
+                })
 
-            invitation = Invitations.objects.filter(office=office, candidate_card=card)
-            if invitation.exists():
-                return Response({
-                    'status': status.HTTP_304_NOT_MODIFIED,
-                    'message': 'Приглашение в офис для этого кандидата уже создано.'
-                })
-            else:
-                # invitation = Invitations.objects.create(
-                #     office=office,
-                #     status=Status.objects.get(name='Приглашен')
-                # )
-                return Response({
-                    'status': status.HTTP_201_CREATED,
-                    'message': f'Приглашение создано'  #  {invitation.id}
-                })
-        else:
+            invitation = self.get_object()
+            invitation.status = status_name
+            invitation.save()
             return Response({
-                'message': f'У авторизированного пользователя нет офиса для приглашения.'
+                'status': status.HTTP_200_OK,
+                'message': f'Статус приглашения успешно изменен на "{status_name}".'
             })
+
+
+@extend_schema(tags=['API вспомогательные'])
+class SetAdminLinkToAllOffices(GenericAPIView):
+    queryset = Office.objects.all()
+    model = Office
+    serializer_class = Office
+    permission_classes = [IsAdministrator]
+
+    @extend_schema(summary='Изменение ссылки на контакт с админом для всех офисов. A')
+    def post(self, request):
+        link = request.user.contact_link
+
+        for office in self.get_queryset():
+            office.link_to_admin = link
+            office.save()
+
+        return Response({
+            'status': status.HTTP_200_OK,
+            'message': 'Ссылка на админа успешно изменена.'
+        })
+
 

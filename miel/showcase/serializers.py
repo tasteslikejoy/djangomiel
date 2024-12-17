@@ -15,12 +15,12 @@ class StatusSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
-class InvitationToOfficeSerializer(serializers.ModelSerializer):
+class InvitationToOfficeSerializer(WritableNestedModelSerializer):
     status = StatusSerializer(required=False)
 
     class Meta:
         model = Invitations
-        fields = ('office', 'status')
+        fields = ('status',)
 
 
 class ExperienceSerializer(serializers.ModelSerializer):
@@ -77,7 +77,6 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
-    # invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)  # TODO
     experience = ExperienceSerializer(many=True, required=False)
     personal_info = PersonalInfoSerializer()
     course = CourseSerializer(read_only=True, source='course_set', required=False)
@@ -205,7 +204,6 @@ class CoursesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['name']
-
 
 
 # Валерааааааа

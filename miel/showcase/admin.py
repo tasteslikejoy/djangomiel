@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations
+from django import forms
+
+from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations, \
+    Favorites
 
 
 # Register your models here.
@@ -98,7 +101,6 @@ class StatusAdmin(admin.ModelAdmin):
 #         'personal_info__last_name',
 #         'personal_info__email',
 #     )
-#     list_filter = ('favorite', 'archived', 'invitation_to_office')
 
 class CandidateCardAdminForm(forms.ModelForm):
     status = forms.ModelChoiceField(
@@ -106,9 +108,11 @@ class CandidateCardAdminForm(forms.ModelForm):
         required=False,
         label='Статус'
     )
+
     class Meta:
         model = CandidateCard
         fields = '__all__'
+
 
 @admin.register(CandidateCard)
 class CandidateCardAdmin(admin.ModelAdmin):

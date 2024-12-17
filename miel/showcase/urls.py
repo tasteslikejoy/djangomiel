@@ -17,12 +17,11 @@ from rest_framework.routers import DefaultRouter
 
 from users.views import CreateAdminUserViewset
 from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
-                            CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView,
-                            AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaChangeView,
-                            InvitationsViewset, AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaHistoryView,
+                            CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView, QuotaChangeView,
+                            AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaHistoryView,
                             ArchiveCandidatesView, InvitedCandidatesView, RejectedCandidateView,
                             StatusCreateUpdateDeleteViewSet, SkillCreateUpdateDeleteViewSet,
-                            CourseCreateUpdateDeleteViewSet)
+                            CourseCreateUpdateDeleteViewSet, InvitationsViewset)
 
 app_name = 'miel'
 
@@ -51,7 +50,7 @@ urlpatterns = [
     path('office_count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
     path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
     path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним
-    path('office_update/<int:office_id>/', OfficeAllView.as_view(), name='office_update'),  # редактирование офиса
+    path('offices/<int:office_id>/', OfficeAllView.as_view(), name='offices'),  # редактирование офиса
     path('quota_history/<int:office_id>/', QuotaHistoryView.as_view(), name='quota_history'),  # история квот
     path('candidate_archive/', ArchiveCandidatesView.as_view(), name='candidate_archive'),  # кандидаты в архиве
     path('candidate_invited/', InvitedCandidatesView.as_view(), name='candidate_invited'),  # новые приглашения
