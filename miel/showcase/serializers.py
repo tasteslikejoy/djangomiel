@@ -86,7 +86,10 @@ class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
 
     class Meta:
         model = CandidateCard
-        fields = '__all__'
+        fields = ['created_at', 'current_workplace', 'current_occupation',
+                  'employment_date', 'comment', 'archived', 'synopsis',
+                  'objects_card', 'clients_card', 'experience', 'personal_info',
+                  'course', 'skills']
         read_only_fields = ('id',)
 
 

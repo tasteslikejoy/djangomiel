@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 
 from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations, \
-    Favorites
+    Favorites, CandidateSkill, CandidateCourse
 
 
 # Register your models here.
@@ -102,29 +102,52 @@ class StatusAdmin(admin.ModelAdmin):
 #         'personal_info__email',
 #     )
 
-class CandidateCardAdminForm(forms.ModelForm):
-    status = forms.ModelChoiceField(
-        queryset=Status.objects.all(),
-        required=False,
-        label='Статус'
-    )
-
-    class Meta:
-        model = CandidateCard
-        fields = '__all__'
+# class CandidateCardAdminForm(forms.ModelForm):
+#     status = forms.ModelChoiceField(
+#         queryset=Status.objects.all(),
+#         required=False,
+#         label='Статус'
+#     )
+#
+#     class Meta:
+#         model = CandidateCard
+#         fields = '__all__'
 
 
 @admin.register(CandidateCard)
 class CandidateCardAdmin(admin.ModelAdmin):
-    form = CandidateCardAdminForm
+    # form = CandidateCardAdminForm
     list_display = [
         'id', 'personal_info', 'employment_date',
-        'archived', 'created_at',
+        'archived', 'created_at'
     ]
     list_filter = ['id', 'created_at']
-    search_fields = ['personal_info']
+    search_fields = ['personal_info__name']
     list_display_links = ['personal_info']
     list_editable = ['archived']
+    readonly_fields = ['get_skills', 'get_courses']
+
+    def get_skills(self, obj):
+        return ', '.join(skill.name for skill in obj.skills.all())
+
+    get_skills.short_description = 'Навыки'
+
+    def get_courses(self, obj):
+        return ', '.join(course.name for course in obj.course.all())
+
+    get_courses.short_description = 'Курсы'
+
+
+@admin.register(CandidateSkill)
+class CandidateSkillAdmin(admin.ModelAdmin):
+    list_display = ('candidate', 'skill')
+    search_fields = ('candidate__personal_info__name', 'skill__name')
+
+
+@admin.register(CandidateCourse)
+class CandidateSkillAdmin(admin.ModelAdmin):
+    list_display = ('candidate', 'course', 'progress')
+    search_fields = ('candidate__personal_info__name', 'course__name')
 
 
 @admin.register(Quota)
@@ -153,7 +176,8 @@ class QuotaInline(admin.TabularInline):
 
 @admin.register(Office)
 class OfficeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity', 'get_quota_need', 'current_quota', 'current_need']
+    list_display = ['id', 'name', 'location', 'superviser', 'get_quota_quantity',
+                    'get_quota_need', 'current_quota', 'current_need']
     list_display_links = ['name']
     list_filter = ['id']
     search_fields = ['name']

@@ -154,7 +154,7 @@ class Favorites(models.Model):
 
 class Invitations(models.Model):
     candidate_card = models.ForeignKey(CandidateCard, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Карточка кандидата', related_name='cards')
-    office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
+    office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис', related_name='office')
     status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name='Статус')
 
     class Meta:
@@ -170,7 +170,21 @@ class CandidateCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     progress = models.IntegerField(default=0, blank=True, verbose_name='Прогресс')
 
+    class Meta:
+        verbose_name = 'Курсы кандидатов'
+        verbose_name_plural = 'Курсы кандидатов'
+
+    def __str__(self):
+        return f'{self.candidate.personal_info} - {self.course.name}'
+
 
 class CandidateSkill(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Навыки кандидатов'
+        verbose_name_plural = 'Навыки кандидатов'
+
+    def __str__(self):
+        return f'{self.candidate.personal_info} - {self.skill.name}'

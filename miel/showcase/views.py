@@ -319,7 +319,7 @@ class ArchiveCandidatesView(generics.ListAPIView):
     serializer_class = InvitationSerializer
     http_method_names = ['get']
 
-    def get_queryset(self):
+    def get_queryset(self):  # archived TRUE если
         return CandidateCard.objects.filter(
             cards__status__name='Принят в штат'
         ).exclude(
