@@ -1,17 +1,15 @@
-import django_filters
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema, extend_schema_serializer, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.decorators import action
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework.views import APIView, status
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import GenericAPIView
 from rest_framework import viewsets
 from django.http import HttpResponseRedirect
 from rest_framework import generics
 from rest_framework.pagination import LimitOffsetPagination
 
-from users.permissions import IsSuperAdministrator, IsAdministrator, IsSuperviser
+from users.permissions import IsAdministrator, IsSuperviser
 from .models import CandidateCard, Office, Status, Quota, Favorites, Invitations, Skill, Course
 from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
                           OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer,
@@ -447,11 +445,6 @@ class InvitationsViewset(viewsets.ModelViewSet):
     def patch(self, request, pk=None, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            print('*-*-*-*-*-*-*-*-*-*')
-            print('*-*-*-*-*-*-*-*-*-*')
-            print(serializer.validated_data)
-            print('*-*-*-*-*-*-*-*-*-*')
-            print('*-*-*-*-*-*-*-*-*-*')
             try:
                 status_obj = serializer.validated_data['status']
                 status_name = Status.objects.get(name=status_obj['name'])

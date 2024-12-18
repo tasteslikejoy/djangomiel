@@ -21,7 +21,7 @@ from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
                             AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaHistoryView,
                             ArchiveCandidatesView, InvitedCandidatesView, RejectedCandidateView,
                             StatusCreateUpdateDeleteViewSet, SkillCreateUpdateDeleteViewSet,
-                            CourseCreateUpdateDeleteViewSet, InvitationsViewset)
+                            CourseCreateUpdateDeleteViewSet, InvitationsViewset, SetAdminLinkToAllOffices)
 
 app_name = 'miel'
 
@@ -43,6 +43,7 @@ urlpatterns = [
     # Alex
     path('showcase/', UserShowcaseRedirectView.as_view(), name='showcase_user_redirect'),
     path('office/<int:pk>/quota_change/', QuotaChangeView.as_view(), name='quota_change'),
+    path('send_admin_link/', SetAdminLinkToAllOffices.as_view(), name='send_admin_link'),
 
     # Alice
     path('candidate_status_count/', CandidateCountView.as_view(),
