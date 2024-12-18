@@ -49,7 +49,7 @@ urlpatterns = [
 
     # Alice
     path('candidate_status_count/', CandidateCountView.as_view(),
-         name='candidate_status_count'),  # ссписок всех статусов и количества кандидатов по ним
+         name='candidate_status_count'),  # список всех статусов и количества кандидатов по ним
     path('office_count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
     path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
     path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним

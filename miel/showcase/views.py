@@ -277,6 +277,14 @@ class OfficeAllView(APIView):
             return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(summary='Создание нового офиса.')
+    def post(self, request, *args, **kwargs):
+        serializer = OfficeAllSerializer(data=request.data)
+        if serializer.is_valid():
+            new_office = serializer.save()
+            return Response(OfficeAllSerializer(new_office).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @extend_schema(tags=['API вспомогательные'])
 class QuotaHistoryView(APIView):
