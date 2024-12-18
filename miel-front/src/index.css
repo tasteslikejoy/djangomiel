@@ -1,0 +1,130 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bordo-color: rgba(150, 0, 71, 1);
+  --bordo-light-color: rgba(166, 38, 99, 1);
+  --bordo-light2-color: rgba(160, 25, 89, 1);
+  --silver-color: rgba(187, 187, 187, 1);
+  --black-color: rgba(0, 0, 0, 1);
+  --white-color: rgba(255, 255, 255, 1);
+  --green-color: rgba(126, 158, 13, 1);
+
+  --lime-color: rgba(156, 199, 0, 1);
+  --blue-green-color: rgba(1, 190, 194, 1);
+  --orange-color: rgba(255, 94, 1, 1);
+  --light-purple-color: rgba(153, 31, 169, 1);
+  --yellow-color: rgba(255, 203, 5, 1);
+  --mauveine-color: rgba(213, 0, 105, 1);
+  --grey-color: rgba(242, 242, 242, 1);
+  --grey2-color: rgba(240, 240, 240, 1);
+  --pink-color: rgba(213, 0, 105, 0.1);
+
+  --background-color: rgba(244, 244, 244, 1);
+  
+
+  --black-text-color: rgba(44, 55, 62, 1);
+  --grey-text-color: rgba(168, 168, 168, 1);
+
+
+
+  --title1-font-family: PT Sans;
+  --title1-font-size: 48px;
+  --title1-font-weight: 700;
+  --title1-line-height: 60px;
+
+  --title2-font-family: PT Sans;
+  --title2-font-size: 36px;
+  --title2-font-weight: 700;
+  --title2-line-height: 50px;
+
+  --subtitle1-font-family: PT Sans;
+  --subtitle1-font-size: 21px;
+  --subtitle1-font-weight: 700;
+  --subtitle1-line-height: 28px;
+
+  --subtitle2-font-family: PT Sans;
+  --subtitle2-font-size: 16px;
+  --subtitle2-font-weight: 700;
+  --subtitle2-line-height: 24px;
+
+
+  --button-font-family: PT Sans;
+  --button-font-size: 22px;
+  --button-font-weight: 700;
+  --button-line-height: 28px;
+
+  --menubutton2-font-family: PT Sans;
+  --menubutton2-font-size: 16px;
+  --menubutton2-font-weight: 400;
+  --menubutton21-line-height: 20px;
+
+  --text1-font-family: PT Sans;
+  --text1-font-size: 16px;
+  --text1-font-weight: 400;
+  --text1-line-height: 20px;
+
+  --text2-font-family: PT Sans;
+  --text2-font-size: 14px;
+  --text2-font-weight: 400;
+  --text2-line-height: 20px;
+
+  --text3-font-family: PT Sans;
+  --text3-font-size: 12px;
+  --text3-font-weight: 400;
+  --text3-line-height: 20px;
+
+  --buttonlink-font-family: PT Sans;
+  --buttonlink-font-size: 12px;
+  --buttonlink-font-weight: 400;
+  --buttonlink-line-height: 20px;
+
+  --buttonlink2-font-family: PT Sans;
+  --buttonlink2-font-size: 16px;
+  --buttonlink2-font-weight: 400;
+  --buttonlink2-line-height: 24px;
+
+
+  --text1bold-font-family: PT Sans;
+  --text1bold-font-size: 16px;
+  --text1bold-font-weight: 700;
+  --text1bold-line-height: 24px;
+
+  --text2bold-font-family: PT Sans;
+  --text2bold-font-size: 14px;
+  --text2bold-font-weight: 700;
+  --text2bold-line-height: 20px;
+
+  --text3bold-font-family: PT Sans;
+  --text3bold-font-size: 12px;
+  --text3bold-font-weight: 700;
+  --text3bold-line-height: 24px;
+
+
+  --menubutton-font-family: PT Sans;
+  --menubutton-font-size: 16px;
+  --menubutton-font-weight: 700;
+  --menubutton-line-height: 18px;
+
+  --quotaused-font-family: PT Sans;
+  --quotaused-font-size: 48px;
+  --quotaused-font-weight: 700;
+  --quotaused-line-height: 43px;
+
+  --quotatotal-font-family: PT Sans;
+  --quotatotal-font-size: 32px;
+  --quotatotal-font-weight: 700;
+  --quotatotal-line-height: 33px;
+
+  --buttontext-font-family: PT Sans;
+  --buttontext-font-size: 22px;
+  --buttontext-font-weight: 700;
+  --buttontext-line-height: 28px;
+
+  --score-font-family: PT Sans;
+  --score-font-size: 10px;
+  --score-font-weight: 700;
+  --score-line-height: 12px;
+}

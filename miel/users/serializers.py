@@ -16,10 +16,11 @@ class UserRegistrationSerializer(BaseUserRegistrationSerializer):
             'last_name',
             'middle_name',
             'contact_link',
+            'password',
         )
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     role = serializers.CharField(source='get_role')
 
     class Meta:

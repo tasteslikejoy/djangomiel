@@ -50,11 +50,13 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'djoser',
     'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -86,14 +88,17 @@ WSGI_APPLICATION = 'miel.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
-    "default": {
+    # "default": {                                          # Docker setup
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "NAME": 'miel_db',
+    #     "USER": 'postgres',
+    #     "PASSWORD": 'postgres',
+    #     "HOST": 'db',
+    #     "PORT": 5432,
+    # }
+
+    "default": {                                            # local docker setup
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME"),
         "USER": os.getenv("DB_LOGIN"),
@@ -101,7 +106,8 @@ DATABASES = {
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
     }
-    #  'default': {
+
+    #  'default': {                                         # host setup
     #    'ENGINE': 'django.db.backends.sqlite3',
     #    'NAME': BASE_DIR / 'db.sqlite3',
     #  },
@@ -180,7 +186,7 @@ DJOSER = {
     'TOKEN_MODEL': None,  # Setup for JWT
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserRegistrationSerializer',
-        'user': 'users.serializers.UserSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
         'activation': ['rest_framework.permissions.AllowAny'],
@@ -190,7 +196,7 @@ DJOSER = {
         'username_reset': ['djoser.permissions.CurrentUserOrAdmin'],  #
         'username_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'set_username': ['djoser.permissions.CurrentUserOrAdmin'],
-        'user_create': ['rest_framework.permissions.IsAdminUser'],  # TODO переделать на пермишн Администратора
+        'user_create': ['users.permissions.IsAdministrator'],  # TODO переделать на пермишн Администратора
         'user_delete': ['rest_framework.permissions.IsAdminUser'],  #
         'user': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_list': ['rest_framework.permissions.IsAdminUser'],  #
@@ -203,6 +209,10 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=100),  # TODO Переделать на релизе
     'REFRESH_TOKEN_LIFETIME': timedelta(days=100),
 }
+
+CORS_ALLOWED_ORIGINS = [  # REACT VIA DOCKER
+    'http://localhost:3000'
+]
 
 # # EMAIL
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

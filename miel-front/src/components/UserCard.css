@@ -1,0 +1,260 @@
+.user-card {
+    max-width: 363px;
+    box-sizing: border-box;
+    background: var(--white-color);
+    border-radius: 20px;
+    border: 1px solid var(--grey-color);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    text-wrap: nowrap;
+}
+
+.user-info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 70px;
+}
+
+.user-header{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.user-about{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-end;
+}
+
+.user-header h2 {
+    font-family: var(--subtitle1-font-family);
+    font-size: var(--subtitle1-font-size);
+    font-weight: var(--subtitle1-font-weight);
+    line-height: var(--subtitle1-line-height);
+    color: var(--black-color);
+}
+
+.resume-link {
+    font-family: var(--menubutton2-font-family);
+    font-size: var(--menubutton2-font-size);
+    font-weight: var(--menubutton2-font-weight);
+    line-height: var(---menubutton2-line-height);
+    color: var(--black-color);
+}
+
+.user-about span{
+    font-family: var(--text3bold-font-family);
+    font-size: var(--text3bold-font-size);
+    font-weight: var(--text3bold-font-weight);
+    line-height: var(--text3bold-line-height);
+    color: var(--black-color);
+    padding: 4px 7px;
+    background-color: var(--pink-color);
+    border-radius: 200px;
+}
+
+.user-header p{
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.tags{
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.tag {
+    font-family: var(--text2-font-family);
+    font-size: var(--text2-font-size);
+    font-weight: var(--text2-font-weight);
+    line-height: var(--text2-line-height);
+    color: var(--black-color);
+    background: transparent;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--grey-color);
+}
+
+.stats {
+    display: flex;
+    gap: 52px;
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+    margin-top: 40px;
+}
+
+.stat-number {
+    font-family: var(--subtitle1-font-family);
+    font-size: var(--subtitle1-font-size);
+    font-weight: var(--subtitle1-font-weight);
+    line-height: var(--subtitle1-line-height);
+    color: var(--mauveine-color);
+}
+
+.courses{
+    margin-top: 34px;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+}
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+.course-name {
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+}
+
+.progress-bar {
+    background: var(--grey-color);
+    height: 6px;
+    overflow: hidden;
+    margin-top: 17px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--grey-text-color);
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.favorites-button,
+.invite-button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.favorites-button {
+    background: transparent;
+    border: 1px solid var(--black-text-color);
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--black-color);
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorites-button:hover{
+    border: 1px solid var(--mauveine-color);
+    box-shadow: 2px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.favorites-button:hover img {
+    stroke: var(--mauveine-color);
+}
+
+
+.invite-button {
+    background: var(--bordo-color);
+    font-family: var(--text1-font-family);
+    font-size: var(--text1-font-size);
+    font-weight: var(--text1-font-weight);
+    line-height: var(--text1-line-height);
+    color: var(--white-color);
+}
+
+.invite-button:hover{
+    box-shadow: 2px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+
+.footer {
+    font-family: var(--text3-font-family);
+    font-size: var(--text3-font-size);
+    font-weight: var(--text3-font-weight);
+    line-height: var(--text3-line-height);
+    color: var(--black-color);
+    align-self: flex-end;
+    margin-right: 18px;
+    margin-top: 12px;
+}
+
+.show-more{
+    align-self: flex-end;
+    margin-top: 17px;
+    margin-right: 18px;
+}
+
+.show-more-button{
+    background: transparent;
+    border: none;
+    font-family: var(--text2-font-family);
+    font-size: var(--text2-font-size);
+    font-weight: var(--text2-font-weight);
+    line-height: var(--text2-line-height);
+    color: var(--black-color);
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.show-more-button.close img{
+    transform: rotate(180deg);
+}
+
+.course-dates {
+    margin-top: 7px;
+    font-family: var(--text3-font-family);
+    font-size: var(--text3-font-size);
+    font-weight: var(--text3-font-weight);
+    line-height: var(--text3-line-height);
+    color: var(--black-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-total{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.course-points{
+    font-family: var(--score-font-family);
+    font-size: var(--score-font-size);
+    font-weight: var(--score-font-weight);
+    line-height: var(--score-line-height);
+    color: var(--silver-color);
+}
+

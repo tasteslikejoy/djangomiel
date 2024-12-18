@@ -17,16 +17,18 @@ from rest_framework.routers import DefaultRouter
 
 from users.views import CreateAdminUserViewset
 from showcase.views import (UserShowcaseRedirectView, CandidateCardViewset,
-                            CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView,
+                            CandidateCountView, OfficeCountView, CandidateAllView, OfficeAllView, QuotaChangeView,
                             AdminShowcaseViewSet, SuperviserShowcaseViewSet, QuotaHistoryView,
                             ArchiveCandidatesView, InvitedCandidatesView, RejectedCandidateView,
-                            StatusCreateUpdateDeleteViewSet, SkillCreateUpdateDeleteViewSet, CourseCreateUpdateDeleteViewSet)
+                            StatusCreateUpdateDeleteViewSet, SkillCreateUpdateDeleteViewSet,
+                            CourseCreateUpdateDeleteViewSet, InvitationsViewset, SetAdminLinkToAllOffices)
 
 app_name = 'miel'
 
 router = DefaultRouter()
 router.register(r'cards', CandidateCardViewset, basename='cards')
 router.register(r'admin_create', CreateAdminUserViewset, basename='admin_create')
+router.register(r'invitations', InvitationsViewset, basename='invitations')
 
 # Валераааа
 router.register(r'showcase/administrator', AdminShowcaseViewSet, basename='showcase_administrator')
@@ -42,6 +44,8 @@ urlpatterns = [
 
     # Alex
     path('showcase/', UserShowcaseRedirectView.as_view(), name='showcase_user_redirect'),
+    path('office/<int:pk>/quota_change/', QuotaChangeView.as_view(), name='quota_change'),
+    path('send_admin_link/', SetAdminLinkToAllOffices.as_view(), name='send_admin_link'),
 
     # Alice
     path('candidate_status_count/', CandidateCountView.as_view(),
@@ -54,5 +58,4 @@ urlpatterns = [
     path('candidate_archive/', ArchiveCandidatesView.as_view(), name='candidate_archive'),  # кандидаты в архиве
     path('candidate_invited/', InvitedCandidatesView.as_view(), name='candidate_invited'),  # новые приглашения
     path('candidate_rejected/', RejectedCandidateView.as_view(), name='candidate_rejected'),  # отклоненные
-
 ]

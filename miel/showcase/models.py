@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-
-User = get_user_model() # забираем кастомную модель
+User = get_user_model()  # забираем кастомную модель
 
 
 class Quota(models.Model):
@@ -24,9 +23,12 @@ class Quota(models.Model):
 class Office(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название офиса')
     location = models.CharField(max_length=255, verbose_name='Адрес')
-    link_to_admin = models.CharField(max_length=255, null=True, blank=True, verbose_name='Связь с админом')  # tastes_like_joy + t.me/
+    link_to_admin = models.CharField(max_length=255, null=True, blank=True,
+                                     verbose_name='Связь с админом')  # tastes_like_joy + t.me/
 
-    superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='ФИО руководителя')
+    superviser = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL,
+                                      verbose_name='ФИО руководителя')
+
     # quota = models.ForeignKey(Quota, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Квота на текущий месяц')
 
     class Meta:
@@ -63,7 +65,6 @@ class Experience(models.Model):
 
 
 class PersonalInfo(models.Model):
-
     class Genders(models.TextChoices):
         male = 'male', 'мужской'
         female = 'female', 'женский'
@@ -110,19 +111,21 @@ class Skill(models.Model):
 
 class CandidateCard(models.Model):
     created_at = models.DateField(auto_now_add=True, verbose_name='Создана')
-    current_workplace = models.CharField(max_length=255, null=True, blank=True, verbose_name='Место работы') # где сейчас
-    current_occupation = models.CharField(max_length=255, null=True, blank=True, verbose_name='Должность') # кем сейчас
-    employment_date = models.DateField(null=True, blank=True, verbose_name='Дата трудоустройства') # дата трудоустройства (авто по статусу)
+    current_workplace = models.CharField(max_length=255, null=True, blank=True,
+                                         verbose_name='Место работы')  # где сейчас
+    current_occupation = models.CharField(max_length=255, null=True, blank=True, verbose_name='Должность')  # кем сейчас
+    employment_date = models.DateField(null=True, blank=True,
+                                       verbose_name='Дата трудоустройства')  # дата трудоустройства (авто по статусу)
     comment = models.CharField(max_length=300, verbose_name='Комментарии')
     archived = models.BooleanField(default=False, blank=True, verbose_name='Архив')
-    synopsis = models.CharField(max_length=255, null=True, blank=True, verbose_name='Ссылка на резюме') # ссылка на резюме
+    synopsis = models.CharField(max_length=255, null=True, blank=True,
+                                verbose_name='Ссылка на резюме')  # ссылка на резюме
 
     objects_card = models.IntegerField(verbose_name='Объекты', null=True, blank=True)
     clients_card = models.IntegerField(verbose_name='Клиенты', null=True, blank=True)
 
-
     experience = models.ForeignKey(Experience, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Опыт')
-    personal_info = models.ForeignKey(PersonalInfo,  on_delete=models.CASCADE, verbose_name='Персональная информация')
+    personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE, verbose_name='Персональная информация')
 
     course = models.ManyToManyField(Course, through='CandidateCourse', blank=True, verbose_name='Курсы')
     skills = models.ManyToManyField(Skill, through='CandidateSkill', blank=True, verbose_name='Навыки')
@@ -150,12 +153,12 @@ class Favorites(models.Model):
 
 class Invitations(models.Model):
     candidate_card = models.ForeignKey(CandidateCard, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Карточка кандидата', related_name='cards')
-    office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
+    office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис', related_name='office')
     status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name='Статус')
 
     class Meta:
         verbose_name = 'Приглашение'
-        verbose_name_plural = 'Приглашение'
+        verbose_name_plural = 'Приглашения'
 
     def __str__(self):
         return self.office.name
@@ -168,5 +171,5 @@ class CandidateCourse(models.Model):
 
 
 class CandidateSkill(models.Model):
-    skill = models.ForeignKey(Skill,on_delete=models.CASCADE)
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
