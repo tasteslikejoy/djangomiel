@@ -169,7 +169,21 @@ class CandidateCourse(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     progress = models.IntegerField(default=0, blank=True, verbose_name='Прогресс')
 
+    class Meta:
+        verbose_name = 'Курсы кандидатов'
+        verbose_name_plural = 'Курсы кандидатов'
+
+    def __str__(self):
+        return f'{self.candidate.personal_info} - {self.course.name}'
+
 
 class CandidateSkill(models.Model):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     candidate = models.ForeignKey(CandidateCard, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Навыки кандидатов'
+        verbose_name_plural = 'Навыки кандидатов'
+
+    def __str__(self):
+        return f'{self.candidate.personal_info} - {self.skill.name}'
