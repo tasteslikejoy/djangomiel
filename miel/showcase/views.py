@@ -285,6 +285,15 @@ class OfficeAllView(APIView):
             return Response(OfficeAllSerializer(new_office).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @extend_schema(summary='Удаление офиса.')
+    def delete(self, request, office_id):
+        try:
+            office = Office.objects.get(id=office_id)
+            office.delete()
+            return Response({'message': 'Офис успешно удален'}, status=status.HTTP_204_NO_CONTENT)
+        except Office.DoesNotExist:
+            return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
+
 
 @extend_schema(tags=['API вспомогательные'])
 class QuotaHistoryView(APIView):
