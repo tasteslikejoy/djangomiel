@@ -45,7 +45,7 @@ class Login extends Component {
     return (
       <div className="login">
         <div className="login__logo">
-          <img src="/src/assets/logo1.gif" alt="Изображение логотипа Миэль" />
+          <img src="./src/assets/logo1.gif" alt="Изображение логотипа Миэль" />
         </div>
         <h1 className="login__title">Витрина кандидатов</h1>
         <form className="login__form" onSubmit={this.handleSubmit}>

@@ -77,6 +77,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
+    # invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)
     experience = ExperienceSerializer(many=True, required=False)
     personal_info = PersonalInfoSerializer()
     course = CourseSerializer(read_only=True, source='course_set', required=False)
@@ -85,7 +86,10 @@ class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
 
     class Meta:
         model = CandidateCard
-        fields = '__all__'
+        fields = ['created_at', 'current_workplace', 'current_occupation',
+                  'employment_date', 'comment', 'archived', 'synopsis',
+                  'objects_card', 'clients_card', 'experience', 'personal_info',
+                  'course', 'skills']
         read_only_fields = ('id',)
 
 

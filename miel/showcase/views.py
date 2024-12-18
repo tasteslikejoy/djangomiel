@@ -310,14 +310,13 @@ class QuotaHistoryView(APIView):
 
 
 @extend_schema(tags=['API вспомогательные'])
-@extend_schema_view(retrieve=extend_schema(exclude=True),
-                    get=extend_schema(summary='Получение кандидатов из архива. A'))
+@extend_schema_view(get=extend_schema(summary='Получение кандидатов из архива. A'))
 class ArchiveCandidatesView(generics.ListAPIView):
     permission_classes = [IsAdministrator]
     serializer_class = InvitationSerializer
     http_method_names = ['get']
 
-    def get_queryset(self):
+    def get_queryset(self):  # archived TRUE если # FIXME доделать переделать
         return CandidateCard.objects.filter(
             cards__status__name='Принят в штат'
         ).exclude(
@@ -328,8 +327,7 @@ class ArchiveCandidatesView(generics.ListAPIView):
 
 
 @extend_schema(tags=['API вспомогательные'])
-@extend_schema_view(retrieve=extend_schema(exclude=True),
-                    get=extend_schema(summary='Получение новых приглашений. A'))
+@extend_schema_view(get=extend_schema(summary='Получение новых приглашений. A'))
 class InvitedCandidatesView(generics.ListAPIView):
     permission_classes = [IsAdministrator]
     serializer_class = InvitationSerializer
@@ -342,8 +340,7 @@ class InvitedCandidatesView(generics.ListAPIView):
 
 
 @extend_schema(tags=['API вспомогательные'])
-@extend_schema_view(retrieve=extend_schema(exclude=True),
-                    get=extend_schema(summary='Получение карточек кандидатов со статусом отклонено. A'))
+@extend_schema_view(get=extend_schema(summary='Получение карточек кандидатов со статусом отклонено. A'))
 class RejectedCandidateView(generics.ListAPIView):
     permission_classes = [IsAdministrator]
     serializer_class = CandidateCardSerializer
