@@ -422,7 +422,7 @@ class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
 class QuotaChangeView(APIView):
     permission_classes = [IsAdministrator]
 
-    @extend_schema(summary='Изменение квоты для конкретного офиса. A')
+    @extend_schema(summary='Создание новой квоты для офиса. A')
     def post(self, request, *args, **kwargs):
         serializer = QuotaAutoCreateSerializer(data=request.data)
 
@@ -459,17 +459,6 @@ class QuotaChangeView(APIView):
 
         serializer = QuotaSerializer(office_quotas, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-    @extend_schema(summary='Удаление квоты для конкретного офиса. A')
-    def delete(self, request, *args, **kwargs):
-        quota_id = kwargs['quota_id']
-        try:
-            quota = Quota.objects.get(id=quota_id)
-            quota.delete()
-            return Response({'message': 'Квота успешно удалена'}, status=status.HTTP_204_NO_CONTENT)
-        except Quota.DoesNotExist:
-            return Response({'error': 'Квота не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @extend_schema(tags=['API для работы с карточками кандидатов'])
