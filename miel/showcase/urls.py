@@ -48,12 +48,10 @@ urlpatterns = [
     path('send_admin_link/', SetAdminLinkToAllOffices.as_view(), name='send_admin_link'),
 
     # Alice
-    path('candidate_status_count/', CandidateCountView.as_view(),
-         name='candidate_status_count'),  # ссписок всех статусов и количества кандидатов по ним
+    path('candidate_status_count/', CandidateCountView.as_view(), name='candidate_status_count'),  # список всех статусов и количества кандидатов по ним
     path('office_count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
     path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
-    path('office_all_count/', OfficeAllView.as_view(), name='office'),  # сколько всего офисов и инфо по ним
-    path('offices/<int:office_id>/', OfficeAllView.as_view(), name='offices'),  # редактирование офиса
+    path('office_all_count/', OfficeAllView.as_view(), name='office'),  # создание, редактирование и получение инфо по офисам и их количество
     path('quota_history/<int:office_id>/', QuotaHistoryView.as_view(), name='quota_history'),  # история квот
     path('candidate_archive/', ArchiveCandidatesView.as_view(), name='candidate_archive'),  # кандидаты в архиве
     path('candidate_invited/', InvitedCandidatesView.as_view(), name='candidate_invited'),  # новые приглашения
