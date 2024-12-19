@@ -264,15 +264,90 @@ class CandidateAllView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# @extend_schema(tags=['API для работы с офисами'])
+# class OfficeAllView(APIView):
+#     permission_classes = [IsAdministrator]
+#
+#     @extend_schema(summary='Отображение количества и данных офисов. A')
+#     def get(self, request, *args, **kwargs):
+#         offices = Office.objects.all()
+#         office_count = offices.count()
+#         serializer = OfficeAllSerializer(offices, many=True)
+#         data = {
+#             'count': office_count,
+#             'offices': serializer.data
+#         }
+#         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
+#
+#     @extend_schema(summary='Редактирование данных офиса. A')
+#     def put(self, request, office_id):
+#         try:
+#             office = Office.objects.get(id=office_id)
+#         except Office.DoesNotExist:
+#             return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
+#
+#         serializer = OfficeAllSerializer(office, data=request.data)
+#         if serializer.is_valid():
+#             update_office = serializer.save()
+#             return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     @extend_schema(summary='Создание нового офиса. A')
+#     def post(self, request, *args, **kwargs):
+#         serializer = OfficeAllSerializer(data=request.data)
+#         if serializer.is_valid():
+#             new_office = serializer.save()
+#             return Response(OfficeAllSerializer(new_office).data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     @extend_schema(summary='Удаление офиса. A')
+#     def delete(self, request, office_id):
+#         try:
+#             office = Office.objects.get(id=office_id)
+#             office.delete()
+#             return Response({'message': 'Офис успешно удален'}, status=status.HTTP_204_NO_CONTENT)
+#         except Office.DoesNotExist:
+#             return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@extend_schema_view(retrieve=extend_schema(exclude=True),
+                    update=extend_schema(exclude=True))
 @extend_schema(tags=['API для работы с офисами'])
-class OfficeAllView(APIView):
+class OfficeAllView(viewsets.ModelViewSet):
     permission_classes = [IsAdministrator]
+    serializer_class = OfficeAllSerializer
+    queryset = Office.objects.all()
+
+    @extend_schema(summary='Назначение руководителя на офис. A')
+    @action(detail=True, methods=['patch'])
+    def set_superviser(self, request, **kwargs):
+        office = self.get_object()
+        try:
+            user = User.objects.get(pk=request.data['user_id'])
+        except User.DoesNotExist:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Пользователя с таким id не существует.'
+            })
+
+        if user.get_role() != User.UserRoles.superviser:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Данный пользователь не является руководителем.'
+            })
+
+        office.superviser=user
+        office.save()
+        return Response({
+            'status': status.HTTP_200_OK,
+            'message': f'В офис {office} назначен руководитель с почтой {user.email}'
+        })
 
     @extend_schema(summary='Отображение количества и данных офисов. A')
-    def get(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         offices = Office.objects.all()
         office_count = offices.count()
-        serializer = OfficeAllSerializer(offices, many=True)
+        serializer = self.get_serializer(offices, many=True)
         data = {
             'count': office_count,
             'offices': serializer.data
@@ -280,28 +355,28 @@ class OfficeAllView(APIView):
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
 
     @extend_schema(summary='Редактирование данных офиса. A')
-    def put(self, request, office_id):
+    def partial_update(self, request, *args, **kwargs):
         try:
-            office = Office.objects.get(id=office_id)
+            office = Office.objects.get(id='office_id')
         except Office.DoesNotExist:
             return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = OfficeAllSerializer(office, data=request.data)
+        serializer = self.get_serializer(office, data=request.data)
         if serializer.is_valid():
             update_office = serializer.save()
-            return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
+            return Response(serializer(update_office).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(summary='Создание нового офиса. A')
-    def post(self, request, *args, **kwargs):
-        serializer = OfficeAllSerializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             new_office = serializer.save()
-            return Response(OfficeAllSerializer(new_office).data, status=status.HTTP_201_CREATED)
+            return Response(serializer(new_office).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(summary='Удаление офиса. A')
-    def delete(self, request, office_id):
+    def destroy(self, request, office_id):
         try:
             office = Office.objects.get(id=office_id)
             office.delete()
