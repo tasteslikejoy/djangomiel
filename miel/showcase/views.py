@@ -485,7 +485,7 @@ class InvitationsViewset(viewsets.ModelViewSet):
             try:
                 status_obj = serializer.validated_data['status']
                 status_name = Status.objects.get(name=status_obj['name'])
-            except ModuleNotFoundError:
+            except Status.DoesNotExist:
                 return Response({
                     'status': status.HTTP_400_BAD_REQUEST,
                     'message': 'Такого статуса нет в базе данных'
