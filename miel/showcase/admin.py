@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django import forms
+
 from .models import CandidateCard, PersonalInfo, Status, Experience, Quota, Office, Course, Skill, Invitations, \
     Favorites, CandidateSkill, CandidateCourse
 

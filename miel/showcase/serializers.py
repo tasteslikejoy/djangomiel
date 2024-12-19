@@ -9,16 +9,25 @@ from .models import (CandidateCard, Office, Status, Experience, PersonalInfo, Co
 User = get_user_model()
 
 
-class InvitationToOfficeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Office
-        fields = ('status',)
+#
+# class InvitationToOfficeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Office
+#         fields = ('status',)
 
 
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Status
         fields = ('name',)
+
+
+# class InvitationToOfficeSerializer(WritableNestedModelSerializer):
+#     status = StatusSerializer(required=False)
+#
+#     class Meta:
+#         model = Invitations
+#         fields = ('status',)
 
 
 class ExperienceSerializer(serializers.ModelSerializer):
@@ -211,7 +220,6 @@ class CoursesSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 
-
 # Валерааааааа
 
 class AdminShowcaseSerializer(serializers.ModelSerializer):
@@ -257,9 +265,3 @@ class SuperviserShowcaseSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
             'created_at': {'read_only': True},
         }
-
-
-
-
-
-

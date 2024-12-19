@@ -143,7 +143,8 @@ class CandidateCard(models.Model):
 
 class Favorites(models.Model):
     """Таблица для хранения избранных руководителями офисов кандидатов"""
-    candidate_card = models.ForeignKey(CandidateCard, on_delete=models.CASCADE, verbose_name='Кандидат')
+    candidate_card = models.ForeignKey(CandidateCard, on_delete=models.CASCADE, verbose_name='Кандидат',
+                                       related_name='favorites')
     office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
 
     class Meta:
