@@ -364,7 +364,7 @@ class OfficeAllView(viewsets.ModelViewSet):
         serializer = self.get_serializer(office, data=request.data)
         if serializer.is_valid():
             update_office = serializer.save()
-            return Response(serializer(update_office).data, status=status.HTTP_200_OK)
+            return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(summary='Создание нового офиса. A')
@@ -372,7 +372,14 @@ class OfficeAllView(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             new_office = serializer.save()
-            return Response(serializer(new_office).data, status=status.HTTP_201_CREATED)
+            quota = new_office.quotas.first()
+            if 'quota' in request.data:
+                new_quota = request.data['quota']
+                quota.quantity = new_quota['quantity']
+                quota.default = new_quota['default']
+                quota.save()
+
+            return Response(OfficeAllSerializer(new_office).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(summary='Удаление офиса. A')
