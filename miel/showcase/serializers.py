@@ -9,25 +9,11 @@ from .models import (CandidateCard, Office, Status, Experience, PersonalInfo, Co
 User = get_user_model()
 
 
-#
-# class InvitationToOfficeSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Office
-#         fields = ('status',)
-
-
 class StatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Status
         fields = ('name',)
-
-
-# class InvitationToOfficeSerializer(WritableNestedModelSerializer):
-#     status = StatusSerializer(required=False)
-#
-#     class Meta:
-#         model = Invitations
-#         fields = ('status',)
+        read_only_fields = ('id',)
 
 
 class ExperienceSerializer(serializers.ModelSerializer):
@@ -42,6 +28,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
             'date_start',
             'date_end',
         )
+        read_only_fields = ('id',)
 
 
 class PersonalInfoSerializer(serializers.ModelSerializer):
@@ -64,28 +51,24 @@ class PersonalInfoSerializer(serializers.ModelSerializer):
         )
 
 
-class CourseSerializer(serializers.ModelSerializer):
-    progress = serializers.IntegerField()
-
-    class Meta:
-        model = Course
-        has_through_model = CandidateCourse
-        fields = (
-            'name',
-            'progress',
-        )
-
-
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
         has_through_model = CandidateSkill
         fields = ('name',)
+        read_only_fields = ('id',)
+
+
+class CourseSerializer(serializers.ModelSerializer):  # вывод прогресса по курсам
+    class Meta:
+        model = Course
+        has_through_model = CandidateCourse
+        fields = ('name',)
+        read_only_fields = ('id',)
 
 
 class CandidateCardSerializer(WritableNestedModelSerializer):  # TODO
-    # invitation_to_office = InvitationToOfficeSerializer(allow_null=True, many=True, required=False)
-    experience = ExperienceSerializer(many=True, required=False)
+    experience = ExperienceSerializer(many=True, required=False)  # FIXME
     personal_info = PersonalInfoSerializer()
     course = CourseSerializer(read_only=True, source='course_set', required=False)
     skills = SkillSerializer(read_only=True, source='skills_set', required=False)
@@ -109,7 +92,8 @@ class CandidateStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Status
-        fields = ['id', 'name', 'candidate_card_count']
+        fields = ('name', 'candidate_card_count')
+        read_only_fields = ('id',)
 
     def get_candidate_card_count(self, obj):
         return CandidateCard.objects.filter(cards__status=obj).count()
@@ -153,8 +137,9 @@ class OfficeAllSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Office
-        fields = ['id', 'name', 'location', 'link_to_admin', 'superviser',
+        fields = ['name', 'location', 'link_to_admin', 'superviser',
                   'quotas', 'invitation_count', 'employed_count']
+        read_only_fields = ('id',)
 
     def get_queryset_not_zero(self):
         return Office.objects.filter(quotas__need__gt=0).count()
@@ -183,7 +168,7 @@ class OfficeAllSerializer(serializers.ModelSerializer):
             quotas_default = {
                 'quantity': validated_data.get('quantity', 10),
                 'default': validated_data.get('default', 10),
-                'need': validated_data.get('need', 10)
+                'need': validated_data.get('need', 0)
             }
             Quota.objects.create(office=office, **quotas_default)
         return office
@@ -212,15 +197,8 @@ class InvitationSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Invitations
         fields = ['office', 'status', 'candidate_card']
+        read_only_fields = ('id',)
 
-
-class CoursesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = ['name']
-
-
-# Валерааааааа
 
 class AdminShowcaseSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source='personal_info.email', read_only=True)
@@ -237,8 +215,7 @@ class AdminShowcaseSerializer(serializers.ModelSerializer):
         model = CandidateCard
         fields = ['id', 'created_at', 'current_workplace', 'current_occupation', 'employment_date',
                   'comment', 'archived', 'synopsis', 'objects_card', 'clients_card',
-                  'experience', 'personal_info',
-                  'email', 'phone', 'contact_link',
+                  'experience', 'personal_info', 'email', 'phone', 'contact_link',
                   'first_name', 'last_name', 'middle_name', 'city', 'gender', 'date_of_birth']
         extra_kwargs = {
             'id': {'read_only': True},

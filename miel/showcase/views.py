@@ -13,8 +13,8 @@ from users.permissions import IsAdministrator, IsSuperviser
 from .models import CandidateCard, Office, Status, Quota, Favorites, Invitations, Skill, Course
 from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
                           OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer,
-                          QuotaAutoCreateSerializer, QuotaSerializer, InvitationSerializer, StatusSerializer, SkillSerializer,
-                          CoursesSerializer)
+                          QuotaAutoCreateSerializer, QuotaSerializer, InvitationSerializer, StatusSerializer,
+                          SkillSerializer, CourseSerializer)
 
 User = get_user_model()
 
@@ -167,7 +167,7 @@ class CandidateCardViewset(viewsets.ModelViewSet):
 
             try:
                 card = CandidateCard.objects.get(pk=pk)
-            except ModuleNotFoundError:
+            except CandidateCard.DoesNotExist:
                 return Response({
                     'status': status.HTTP_400_BAD_REQUEST,
                     'message': 'Карточка кандидата не существует или ошибка в коде.'
@@ -182,7 +182,7 @@ class CandidateCardViewset(viewsets.ModelViewSet):
 
             invitation = Invitations.objects.create(
                 office=office,
-                status=Status.objects.get(name='Приглашен'),
+                status=Status.objects.get(name='На рассмотрении'),
                 candidate_card=card
             )
             return Response({
@@ -385,7 +385,7 @@ class SkillCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=['API создание, редактирование, удаление курсов'])
 class CourseCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
-    serializer_class = CoursesSerializer
+    serializer_class = CourseSerializer
     permission_classes = [IsAdministrator]
 
 
@@ -432,7 +432,6 @@ class QuotaChangeView(APIView):
             office_quotas = office_quotas.last()
 
         if serializer.is_valid():
-            print(serializer.validated_data)
             quota = Quota.objects.create(
                 **serializer.validated_data,
                 used=office_quotas.used,
@@ -456,7 +455,6 @@ class QuotaChangeView(APIView):
 
         serializer = QuotaSerializer(office_quotas, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     @extend_schema(summary='Удаление квоты для конкретного офиса. A')
     def delete(self, request, *args, **kwargs):
