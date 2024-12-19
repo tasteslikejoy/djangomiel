@@ -460,19 +460,6 @@ class QuotaChangeView(APIView):
         serializer = QuotaSerializer(office_quotas, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(summary='Обновление квоты для конкретного офиса. A')
-    def put(self, request, *args, **kwargs):
-        quota_id = kwargs['quota_id']
-        try:
-            quota = Quota.objects.get(id=quota_id)
-        except Quota.DoesNotExist:
-            return Response({'error': 'Квота не найдена'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = QuotaAutoCreateSerializer(quota, data=request.data)
-        if serializer.is_valid():
-            updated_quota = serializer.save()
-            return Response(QuotaSerializer(updated_quota).data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(summary='Удаление квоты для конкретного офиса. A')
     def delete(self, request, *args, **kwargs):
