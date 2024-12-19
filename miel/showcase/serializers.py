@@ -198,7 +198,10 @@ class OfficeAllSerializer(serializers.ModelSerializer):
         return instance
 
 
-class InvitationSerializer(serializers.ModelSerializer):
+class InvitationSerializer(WritableNestedModelSerializer):
+    office = OfficeAllSerializer(required=False)
+    status = StatusSerializer(required=False)
+
     class Meta:
         model = Invitations
         fields = ['office', 'status', 'candidate_card']
