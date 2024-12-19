@@ -180,14 +180,29 @@ class CandidateCardViewset(viewsets.ModelViewSet):
                     'message': 'Приглашение в офис для этого кандидата уже создано.'
                 })
 
+            quota_data = office.quotas.order_by('date').last()
+            if quota_data.quantity > quota_data.used:
+                quota_data.used += 1
+                Quota.objects.create(quantity=quota_data.quantity,
+                                     default=quota_data.default,
+                                     need=quota_data.need,
+                                     used=quota_data.used,
+                                     office=office)
+            else:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Недостаточно свободных квот для приглашения.'
+                })
+
             invitation = Invitations.objects.create(
                 office=office,
                 status=Status.objects.get(name='На рассмотрении'),
                 candidate_card=card
             )
+
             return Response({
                 'status': status.HTTP_201_CREATED,
-                'message': f'Приглашение создано {invitation.id}'
+                'message': f'Приглашение создано id="{invitation.id}"'
             })
         else:
             return Response({
