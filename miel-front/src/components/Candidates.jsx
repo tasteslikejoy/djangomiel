@@ -12,6 +12,9 @@ class Candidates extends Component{
                 <UserCard />
                 <UserCard />
                 <UserCard />
+                <UserCard />
+                <UserCard />
+                <UserCard />
             </div>
         </section>
         )
