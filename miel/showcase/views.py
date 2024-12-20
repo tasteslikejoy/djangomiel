@@ -13,8 +13,8 @@ from users.permissions import IsAdministrator, IsSuperviser
 from .models import CandidateCard, Office, Status, Quota, Favorites, Invitations, Skill, Course
 from .serializers import (CandidateCardSerializer, CandidateStatusSerializer, CandidateAllSerializer,
                           OfficeAllSerializer, AdminShowcaseSerializer, SuperviserShowcaseSerializer,
-                          QuotaAutoCreateSerializer, QuotaSerializer, InvitationSerializer, StatusSerializer, SkillSerializer,
-                          CoursesSerializer)
+                          QuotaAutoCreateSerializer, QuotaSerializer, InvitationSerializer, StatusSerializer,
+                          SkillSerializer, CourseSerializer)
 
 User = get_user_model()
 
@@ -167,7 +167,7 @@ class CandidateCardViewset(viewsets.ModelViewSet):
 
             try:
                 card = CandidateCard.objects.get(pk=pk)
-            except ModuleNotFoundError:
+            except CandidateCard.DoesNotExist:
                 return Response({
                     'status': status.HTTP_400_BAD_REQUEST,
                     'message': 'Карточка кандидата не существует или ошибка в коде.'
@@ -180,14 +180,29 @@ class CandidateCardViewset(viewsets.ModelViewSet):
                     'message': 'Приглашение в офис для этого кандидата уже создано.'
                 })
 
+            quota_data = office.quotas.order_by('date').last()
+            if quota_data.quantity > quota_data.used:
+                quota_data.used += 1
+                Quota.objects.create(quantity=quota_data.quantity,
+                                     default=quota_data.default,
+                                     need=quota_data.need,
+                                     used=quota_data.used,
+                                     office=office)
+            else:
+                return Response({
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'message': 'Недостаточно свободных квот для приглашения.'
+                })
+
             invitation = Invitations.objects.create(
                 office=office,
-                status=Status.objects.get(name='Приглашен'),
+                status=Status.objects.get(name='На рассмотрении'),
                 candidate_card=card
             )
+
             return Response({
                 'status': status.HTTP_201_CREATED,
-                'message': f'Приглашение создано {invitation.id}'
+                'message': f'Приглашение создано id="{invitation.id}"'
             })
         else:
             return Response({
@@ -249,15 +264,90 @@ class CandidateAllView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# @extend_schema(tags=['API для работы с офисами'])
+# class OfficeAllView(APIView):
+#     permission_classes = [IsAdministrator]
+#
+#     @extend_schema(summary='Отображение количества и данных офисов. A')
+#     def get(self, request, *args, **kwargs):
+#         offices = Office.objects.all()
+#         office_count = offices.count()
+#         serializer = OfficeAllSerializer(offices, many=True)
+#         data = {
+#             'count': office_count,
+#             'offices': serializer.data
+#         }
+#         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
+#
+#     @extend_schema(summary='Редактирование данных офиса. A')
+#     def put(self, request, office_id):
+#         try:
+#             office = Office.objects.get(id=office_id)
+#         except Office.DoesNotExist:
+#             return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
+#
+#         serializer = OfficeAllSerializer(office, data=request.data)
+#         if serializer.is_valid():
+#             update_office = serializer.save()
+#             return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     @extend_schema(summary='Создание нового офиса. A')
+#     def post(self, request, *args, **kwargs):
+#         serializer = OfficeAllSerializer(data=request.data)
+#         if serializer.is_valid():
+#             new_office = serializer.save()
+#             return Response(OfficeAllSerializer(new_office).data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     @extend_schema(summary='Удаление офиса. A')
+#     def delete(self, request, office_id):
+#         try:
+#             office = Office.objects.get(id=office_id)
+#             office.delete()
+#             return Response({'message': 'Офис успешно удален'}, status=status.HTTP_204_NO_CONTENT)
+#         except Office.DoesNotExist:
+#             return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@extend_schema_view(retrieve=extend_schema(exclude=True),
+                    update=extend_schema(exclude=True))
 @extend_schema(tags=['API для работы с офисами'])
-class OfficeAllView(APIView):
+class OfficeAllView(viewsets.ModelViewSet):
     permission_classes = [IsAdministrator]
+    serializer_class = OfficeAllSerializer
+    queryset = Office.objects.all()
+
+    @extend_schema(summary='Назначение руководителя на офис. A')
+    @action(detail=True, methods=['patch'])
+    def set_superviser(self, request, **kwargs):
+        office = self.get_object()
+        try:
+            user = User.objects.get(pk=request.data['user_id'])
+        except User.DoesNotExist:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Пользователя с таким id не существует.'
+            })
+
+        if user.get_role() != User.UserRoles.superviser:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Данный пользователь не является руководителем.'
+            })
+
+        office.superviser=user
+        office.save()
+        return Response({
+            'status': status.HTTP_200_OK,
+            'message': f'В офис {office} назначен руководитель с почтой {user.email}'
+        })
 
     @extend_schema(summary='Отображение количества и данных офисов. A')
-    def get(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
         offices = Office.objects.all()
         office_count = offices.count()
-        serializer = OfficeAllSerializer(offices, many=True)
+        serializer = self.get_serializer(offices, many=True)
         data = {
             'count': office_count,
             'offices': serializer.data
@@ -265,28 +355,35 @@ class OfficeAllView(APIView):
         return Response(data, status=status.HTTP_200_OK)  # TODO добавить в гет сколько офисов требуют квоту
 
     @extend_schema(summary='Редактирование данных офиса. A')
-    def put(self, request, office_id):
+    def partial_update(self, request, *args, **kwargs):
         try:
             office = Office.objects.get(id=office_id)
         except Office.DoesNotExist:
             return Response({'error': 'Офис не найден'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = OfficeAllSerializer(office, data=request.data)
+        serializer = self.get_serializer(office, data=request.data)
         if serializer.is_valid():
             update_office = serializer.save()
             return Response(OfficeAllSerializer(update_office).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(summary='Создание нового офиса. A')
-    def post(self, request, *args, **kwargs):
-        serializer = OfficeAllSerializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             new_office = serializer.save()
+            quota = new_office.quotas.first()
+            if 'quota' in request.data:
+                new_quota = request.data['quota']
+                quota.quantity = new_quota['quantity']
+                quota.default = new_quota['default']
+                quota.save()
+
             return Response(OfficeAllSerializer(new_office).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(summary='Удаление офиса. A')
-    def delete(self, request, office_id):
+    def destroy(self, request, office_id):
         try:
             office = Office.objects.get(id=office_id)
             office.delete()
@@ -326,14 +423,13 @@ class QuotaHistoryView(APIView):
 
 
 @extend_schema(tags=['API вспомогательные'])
-@extend_schema_view(retrieve=extend_schema(exclude=True),
-                    get=extend_schema(summary='Получение кандидатов из архива. A'))
+@extend_schema_view(get=extend_schema(summary='Получение кандидатов из архива. A'))
 class ArchiveCandidatesView(generics.ListAPIView):
     permission_classes = [IsAdministrator]
     serializer_class = CandidateCardSerializer
     http_method_names = ['get']
 
-    def get_queryset(self):  # archived TRUE если
+    def get_queryset(self):  # archived TRUE если # FIXME доделать переделать
         return CandidateCard.objects.filter(
             cards__status__name='Принят в штат'
         ).exclude(
@@ -344,8 +440,7 @@ class ArchiveCandidatesView(generics.ListAPIView):
 
 
 @extend_schema(tags=['API вспомогательные'])
-@extend_schema_view(retrieve=extend_schema(exclude=True),
-                    get=extend_schema(summary='Получение новых приглашений. A'))
+@extend_schema_view(get=extend_schema(summary='Получение новых приглашений. A'))
 class InvitedCandidatesView(generics.ListAPIView):
     permission_classes = [IsAdministrator]
     serializer_class = InvitationSerializer
@@ -358,8 +453,7 @@ class InvitedCandidatesView(generics.ListAPIView):
 
 
 @extend_schema(tags=['API вспомогательные'])
-@extend_schema_view(retrieve=extend_schema(exclude=True),
-                    get=extend_schema(summary='Получение карточек кандидатов со статусом отклонено. A'))
+@extend_schema_view(get=extend_schema(summary='Получение карточек кандидатов со статусом отклонено. A'))
 class RejectedCandidateView(generics.ListAPIView):
     permission_classes = [IsAdministrator]
     serializer_class = CandidateCardSerializer
@@ -388,7 +482,7 @@ class SkillCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
 @extend_schema(tags=['API создание, редактирование, удаление курсов'])
 class CourseCreateUpdateDeleteViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
-    serializer_class = CoursesSerializer
+    serializer_class = CourseSerializer
     permission_classes = [IsAdministrator]
 
 
@@ -422,7 +516,7 @@ class SuperviserShowcaseViewSet(viewsets.ModelViewSet):
 class QuotaChangeView(APIView):
     permission_classes = [IsAdministrator]
 
-    @extend_schema(summary='Создание новой квоты для офиса. A')
+    @extend_schema(summary='Создание квоты для конкретного офиса. A')
     def post(self, request, *args, **kwargs):
         serializer = QuotaAutoCreateSerializer(data=request.data)
 
@@ -435,7 +529,6 @@ class QuotaChangeView(APIView):
             office_quotas = office_quotas.last()
 
         if serializer.is_valid():
-            print(serializer.validated_data)
             quota = Quota.objects.create(
                 **serializer.validated_data,
                 used=office_quotas.used,
@@ -461,6 +554,17 @@ class QuotaChangeView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+    @extend_schema(summary='Удаление квоты для конкретного офиса. A')
+    def delete(self, request, *args, **kwargs):
+        quota_id = kwargs['quota_id']
+        try:
+            quota = Quota.objects.get(id=quota_id)
+            quota.delete()
+            return Response({'message': 'Квота успешно удалена'}, status=status.HTTP_204_NO_CONTENT)
+        except Quota.DoesNotExist:
+            return Response({'error': 'Квота не найдена'}, status=status.HTTP_404_NOT_FOUND)
+
+
 @extend_schema(tags=['API для работы с карточками кандидатов'])
 @extend_schema_view(partial_update=extend_schema(exclude=True))
 class InvitationsViewset(viewsets.ModelViewSet):
@@ -477,7 +581,7 @@ class InvitationsViewset(viewsets.ModelViewSet):
             try:
                 status_obj = serializer.validated_data['status']
                 status_name = Status.objects.get(name=status_obj['name'])
-            except ModuleNotFoundError:
+            except Status.DoesNotExist:
                 return Response({
                     'status': status.HTTP_400_BAD_REQUEST,
                     'message': 'Такого статуса нет в базе данных'

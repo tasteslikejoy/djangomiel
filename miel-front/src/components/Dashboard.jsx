@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
+import AuthContext from '../context/AuthContext';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Candidates from './Candidates';
@@ -7,34 +7,13 @@ import Favourites from './Favourites';
 import Invited from './Invited';
 import './Dashboard.css';
 
-const Dashboard = ({ onLogout }) => {
-  const [userData, setUserData] = useState(null);
-  const [activeComponent, setActiveComponent] = useState("Витрина кандидатов");
+const Dashboard = () => {
+  const { authTokens, logoutUser } = useContext(AuthContext);
+  let [user, setProfile] = useState([])
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
-        console.error('Токен отсутствует');
-        return;
-      }
-
-      try {
-        const response = await axios.get('http://localhost:3000/auth/jwt/create', { //??
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setUserData(response.data);
-      } catch (error) {
-        console.error('Ошибка загрузки данных пользователя:', error);
-        onLogout();
-      }
-    };
-
-    fetchData();
-  }, [onLogout]);
+      getProfile()
+  },[])
 
   const handleMenuClick = (component) => {
     setActiveComponent(component);
@@ -55,19 +34,32 @@ const Dashboard = ({ onLogout }) => {
       ContentComponent = <Candidates />;
   }
 
-  if (!userData) {
-    return <div>Загрузка данных пользователя...</div>;
+  const getProfile = async() => {
+      let response = await fetch('localhost:3000/auth/users', {
+      method: 'GET',
+      headers:{
+          'Content-Type': 'application/json',
+          'Authorization':'Bearer ' + String(authTokens.access)
+      }
+      })
+      let data = await response.json()
+      console.log(data)
+      if(response.status === 200){
+          setProfile(data)
+      } else if(response.statusText === 'Unauthorized'){
+          logoutUser()
+      }
   }
 
   return (
-    <div className="app-container">
-      <Header userData={userData} onLogout={onLogout} />
-      <div className="main-content">
-        <Sidebar onMenuClick={handleMenuClick} />
-        <div className="content">{ContentComponent}</div>
-      </div>
+  <div className="app-container">
+    <Header  />
+    <div className="main-content">
+      <Sidebar onMenuClick={handleMenuClick} />
+      <div className="content">{ContentComponent}</div>
     </div>
-  );
-};
+  </div>
+  )
+}
 
 export default Dashboard;

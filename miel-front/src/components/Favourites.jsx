@@ -11,11 +11,6 @@ class Favourites extends Component{
             <div className="cards">
                 <UserCard />
                 <UserCard />
-                <UserCard />
-                <UserCard />
-                <UserCard />
-                <UserCard />
-                <UserCard />
             </div>
         </section>
         )

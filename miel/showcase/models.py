@@ -143,7 +143,8 @@ class CandidateCard(models.Model):
 
 class Favorites(models.Model):
     """Таблица для хранения избранных руководителями офисов кандидатов"""
-    candidate_card = models.ForeignKey(CandidateCard, on_delete=models.CASCADE, verbose_name='Кандидат')
+    candidate_card = models.ForeignKey(CandidateCard, on_delete=models.CASCADE, verbose_name='Кандидат',
+                                       related_name='favorites')
     office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис')
 
     class Meta:
@@ -155,6 +156,7 @@ class Invitations(models.Model):
     candidate_card = models.ForeignKey(CandidateCard, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Карточка кандидата', related_name='cards')
     office = models.ForeignKey(Office, on_delete=models.CASCADE, verbose_name='Офис', related_name='office')
     status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name='Статус')
+    created_at = models.DateField(auto_now_add=True, verbose_name='дата создания')
 
     class Meta:
         verbose_name = 'Приглашение'

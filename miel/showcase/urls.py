@@ -38,6 +38,7 @@ router.register(r'showcase/superviser', SuperviserShowcaseViewSet, basename='sho
 router.register(r'statuses', StatusCreateUpdateDeleteViewSet, basename='statuses')  # создание, редактирование, удаление статусов
 router.register(r'skills', SkillCreateUpdateDeleteViewSet, basename='skills')  # создание, редактирование, удаление навыков
 router.register(r'course', CourseCreateUpdateDeleteViewSet, basename='course')  # создание, редактирование, удаление курсов
+router.register(r'offices', OfficeAllView, basename='offices')
 
 urlpatterns = [
     path('', include((router.urls, 'miel'), namespace='miel')),
@@ -51,7 +52,7 @@ urlpatterns = [
     path('candidate_status_count/', CandidateCountView.as_view(), name='candidate_status_count'),  # список всех статусов и количества кандидатов по ним
     path('office_count/', OfficeCountView.as_view(), name='office_quota_count'),  # сколько офисов требуют квоту
     path('candidate_count/', CandidateAllView.as_view(), name='candidate_count'),  # сколько всего кандидатов INT
-    path('office_all_count/', OfficeAllView.as_view(), name='office'),  # создание, редактирование и получение инфо по офисам и их количество
+    # path('offices/', OfficeAllView.as_view(), name='office'),  # создание, редактирование и получение инфо по офисам и их количество
     path('quota_history/<int:office_id>/', QuotaHistoryView.as_view(), name='quota_history'),  # история квот
     path('candidate_archive/', ArchiveCandidatesView.as_view(), name='candidate_archive'),  # кандидаты в архиве
     path('candidate_invited/', InvitedCandidatesView.as_view(), name='candidate_invited'),  # новые приглашения
